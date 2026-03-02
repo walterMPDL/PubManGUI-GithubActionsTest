@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgbActiveModal, NgbTooltip } from "@ng-bootstrap/ng-bootstrap";
 import { MessageService } from "../../../services/message.service";
 import { AaService } from "../../../services/aa.service";
-import { Subscription } from "rxjs";
+import {catchError, finalize, Subscription, tap, throwError} from "rxjs";
 import { SavedSearchVO } from "../../../model/inge";
 import { SavedSearchService } from "../../../services/pubman-rest-client/saved-search.service";
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -10,7 +10,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
 import { DatePipe } from "@angular/common";
 import { LoadingComponent } from "../loading/loading.component";
 import { CopyButtonDirective } from "../../../directives/copy-button.directive";
-import {TranslatePipe} from "@ngx-translate/core";
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'pure-saved-searches-modal',
@@ -41,7 +41,8 @@ export class SavedSearchesModalComponent {
               private savedSearchService: SavedSearchService,
               private messageService: MessageService,
               private aaService: AaService,
-              private clipboard: Clipboard) {
+              private clipboard: Clipboard,
+              private translateService: TranslateService) {
 
     this.principalSubscription = this.aaService.principal.subscribe(p => {
       this.updateSavedSearchList()
@@ -122,5 +123,31 @@ export class SavedSearchesModalComponent {
       .add(
         () => {this.savedSearchesLoading = false}
       );
+  }
+
+  updateSavedSearch(value: number) {
+    this.savedSearchesLoading = true;
+    const savedSearch: SavedSearchVO = {
+      objectId: this.savedSearches[value].objectId,
+      name: this.savedSearches[value].name,
+      searchForm: this.searchFormJson,
+      lastModificationDate: this.savedSearches[value].lastModificationDate
+    }
+    this.savedSearchService.update(this.savedSearches[value].objectId!, savedSearch).pipe(
+      tap(search => {
+        this.updateSavedSearchList();
+        this.messageService.success(this.translateService.instant('common.updateSuccessful'));
+      }),
+      catchError(err => {
+          this.errorMessage = err;
+          return throwError(() => err)
+        }
+      ),
+      finalize(() => {
+        this.savedSearchesLoading = false
+      })
+    )
+
+      .subscribe();
   }
 }

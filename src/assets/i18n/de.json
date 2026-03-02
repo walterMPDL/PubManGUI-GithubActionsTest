@@ -903,7 +903,8 @@
     "delete": "Löschen",
     "saveCurrent": "Aktuelle Suchmaske speichern",
     "savedMasks": "Meine Suchmasken",
-    "title": "Gespeicherte Suchen"
+    "title": "Gespeicherte Suchen",
+    "update": "Mit der aktuellen Suchmaske überschreiben"
   },
   "Search": {
     "adminMode": "Admin",
