@@ -42,6 +42,7 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
   #hasLogs = signal(false);
   public hasLogs = computed(() => this.#hasLogs());
 
+
   #logFilters = signal<resp.BatchProcessLogDetailState[]>([]);
   public getLogFilters = computed( () => this.#logFilters() );
 
@@ -49,12 +50,9 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
       this.#logFilters.set(filters);
   }
 
-
-
   public getItemsCount() {
     return this.objectIds$.value.length;
   }
-
 
   get items(): string[] {
     return this.objectIds$.value
@@ -65,19 +63,20 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
   }
 
   startProcess(id: number) {
-    this.batchProcessLogHeaderId = id;
-    this.#processRunning.set(true);
-    //this.items = [];
-
-    this.msgSvc.info(this.translateSvc.instant(_('batch.actions.start')) + '\n');
-    this.updateProcessProgress();
+    this.getBatchProcessUserLock().subscribe(response => {
+        this.msgSvc.info(this.translateSvc.instant(_('batch.actions.start')) + '\n');
+        this.#processRunning.set(true);
+        this.updateProcessProgress(id);
+    });
   }
 
   endProcess() {
     this.batchProcessLogHeaderId = -1;
-    this.#processRunning.set(false);
 
     this.msgSvc.success(this.translateSvc.instant(_('batch.actions.stop')) + '\n');
+    this.#processRunning.set(false);
+
+    const removed = this.removeItems(this.items);
     this.checkLogs();
   }
 
@@ -87,13 +86,13 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
   #processLog = signal({} as resp.BatchProcessLogHeaderDbVO);
   public getProcessLog = computed( () => this.#processLog() );
 
-  updateProcessProgress() {
-    if (this.#processRunning()) {
-      this.getBatchProcessLogHeaderId(this.batchProcessLogHeaderId).subscribe(response => {
+  updateProcessProgress(id: number) {
+    if (this.isProcessRunning()) { 
+      this.getBatchProcessLogHeaderId(id).subscribe(response => { 
         this.#processLog.set(response);
         if (response.state === resp.BatchProcessLogHeaderState.RUNNING) {
           setTimeout(() => {
-            this.updateProcessProgress();
+            this.updateProcessProgress(id);
           }, 1000 * (this.updateDelay < 60 ? Math.ceil(this.updateDelay++ / 10) : 60 ));
         } else {
           this.updateDelay = 2;
@@ -128,7 +127,7 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
     return datasets;
   }
 
-  // Workflow
+  // Only for Administrators
 
   getBatchProcessUserLock(): Observable<resp.BatchProcessUserLockDbVO> {
     const url = `${this.#baseUrl}/batchProcess/getBatchProcessUserLock`;
@@ -154,8 +153,8 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
   getAllBatchProcessLogHeaders(): Observable<resp.BatchProcessLogHeaderDbVO[]> {
     const url = `${this.#baseUrl}/batchProcess/getAllBatchProcessLogHeaders`;
 
-    //return this.http.get<resp.BatchProcessLogHeaderDbVO[]>(url, { withCredentials: true, context: ignoredStatuses([404])});
-    return this.http.get<resp.BatchProcessLogHeaderDbVO[]>(url, { withCredentials: true });
+    return this.http.get<resp.BatchProcessLogHeaderDbVO[]>(url, { withCredentials: true, context: ignoredStatuses([404])});
+    //return this.http.get<resp.BatchProcessLogHeaderDbVO[]>(url, { withCredentials: true });
   }
 
   getBatchProcessLogHeaderId(batchLogHeaderId: number): Observable<resp.BatchProcessLogHeaderDbVO> {
@@ -277,7 +276,7 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
     const actionResponse: Observable<resp.ActionGenericResponse> = this.http.put<resp.ActionGenericResponse>(url, body, { withCredentials: true })
       .pipe(
         tap((value: resp.ActionGenericResponse) => {
-          this.batchProcessLogHeaderId = value.batchLogHeaderId;
+          console.log('Success: \n' + JSON.stringify(value));
         }),
         catchError(err => throwError(() => err)),
       );
@@ -531,11 +530,4 @@ export class BatchService extends AddRemoveFromListGenericService implements OnD
     return actionResponse;
   }
 
-  /*
-  removeAll() {
-    this.items = [];
-    this.objectIds$.next([]);
-  }
-
-   */
 }

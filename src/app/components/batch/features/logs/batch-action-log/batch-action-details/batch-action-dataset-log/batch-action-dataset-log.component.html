@@ -34,7 +34,7 @@
   </td>
   
   <td class="col-5 col-lg-4 ps-1 ps-lg-0">
-    <span>{{ 'BatchProcessMessages.' + log.message | translate }}</span>
+    <span>{{ 'BatchProcessMessages.' + ( log.message || 'BATCH_INTERNAL_ERROR')| translate }}</span>
   </td>
 </tr>
 

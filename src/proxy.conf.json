@@ -2,12 +2,14 @@
   "/cone": {
     "target": "https://gui.inge.mpdl.mpg.de",
     "secure": false,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "changeOrigin": true
   },
   "/rest": {
     "target": "https://gui.inge.mpdl.mpg.de",
     "secure": false,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "changeOrigin": true
   },
   "/pureblogfeed": {
     "target": "https://blog.pure.mpg.de/json1",

@@ -331,7 +331,7 @@ export class ItemViewComponent {
       comp.rollbackVersion = rollbackVersion;
     }
     comp.successfullyDone.subscribe(data => {
-      this.listStateService.itemUpdated.next(this.item?.objectId);
+      //this.listStateService.itemUpdated.next(this.item?.objectId);
       if(type !== 'delete') {
         this.init(this.item?.objectId!)
       }
@@ -359,7 +359,7 @@ export class ItemViewComponent {
     const changeContextComp: ChangeContextModalComponent = this.modalService.open(ChangeContextModalComponent).componentInstance;
     changeContextComp.item = this.item!;
     changeContextComp.successfullyDone.subscribe(data => {
-      this.listStateService.itemUpdated.next(this.item?.objectId);
+      //this.listStateService.itemUpdated.next(this.item?.objectId);
       this.init(itemToVersionId(this.item!));
     })
   }
@@ -368,7 +368,7 @@ export class ItemViewComponent {
     const updateLocalTagsModal: UpdateLocaltagsModalComponent = this.modalService.open(UpdateLocaltagsModalComponent).componentInstance;
     updateLocalTagsModal.item = this.item!;
     updateLocalTagsModal.successfullyDone.subscribe(data => {
-      this.listStateService.itemUpdated.next(this.item?.objectId);
+      //this.listStateService.itemUpdated.next(this.item?.objectId);
       this.init(itemToVersionId(this.item!));
     })
   }

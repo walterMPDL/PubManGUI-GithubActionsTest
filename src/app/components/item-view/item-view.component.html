@@ -331,7 +331,13 @@
         </span>
       </pure-item-view-metadata-element>
       <pure-item-view-metadata-element [sub]="true" [hl]="true">
-        <span label>{{ 'MetadataFields.dateModified' | translate }}</span>
+        <span label>{{ 'MetadataFields.dateModified' | translate }} ({{ 'common.item' | translate }})</span>
+        <span content>
+        {{ item.lastModificationDate | date:'medium' }}
+      </span>
+      </pure-item-view-metadata-element>
+      <pure-item-view-metadata-element [sub]="true" [hl]="true">
+        <span label>{{ 'MetadataFields.dateModified' | translate }} ({{ 'common.version' | translate }})</span>
         <span content>
           {{ item.modificationDate | date:'medium' }}
         </span>

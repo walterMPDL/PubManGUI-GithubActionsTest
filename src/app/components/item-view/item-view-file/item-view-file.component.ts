@@ -10,7 +10,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { CopyButtonDirective } from "../../../directives/copy-button.directive";
 import { FileSizePipe } from "../../../pipes/file-size.pipe";
 import { MatomoTracker } from "ngx-matomo-client";
-import { EMPTY } from "rxjs";
+import {EMPTY, of} from "rxjs";
 import { UpperCasePipe } from "@angular/common";
 import mime from "mime";
 
@@ -36,7 +36,7 @@ export class ItemViewFileComponent {
   @Input({required: true}) item!: ItemVersionVO;
 
   audienceInfos: any;
-  fileAccessGranted = false;
+  fileAccessGranted = true;
   oaStatusIcon?: string;
 
   fileType?:string | null;
@@ -49,9 +49,8 @@ export class ItemViewFileComponent {
     if(this.file?.storage === Storage.INTERNAL_MANAGED) {
       this.getAudienceInfos(this.file).subscribe(infos => {
         this.audienceInfos = infos;
+        this.fileAccessGranted = this.getFileAccessGranted(this.file);
       });
-
-      this.fileAccessGranted = this.getFileAccessGranted(this.file);
 
       this.fileType = mime.getExtension(this.file.mimeType);
 
@@ -64,13 +63,13 @@ export class ItemViewFileComponent {
     if(file?.visibility=== Visibility.AUDIENCE) {
       return this.itemsService.retrieveFileAuthorizationInfo(getFullItemId(this.item), file!.objectId!);
     }
-    return EMPTY;
+    return of(undefined);
   }
 
   getFileAccessGranted(file: FileDbVO) {
     const genericFileAccess = checkFileAccess(file, this.item, this.aaService.principal.value);
     if(file.visibility=== Visibility.AUDIENCE) {
-      const audienceAccess:boolean = this.audienceInfos?.get(file.objectId!)?.actions?.READ_FILE || false;
+      const audienceAccess:boolean = this.audienceInfos?.actions?.READ_FILE || false;
       return genericFileAccess || audienceAccess;
     }
     return genericFileAccess;

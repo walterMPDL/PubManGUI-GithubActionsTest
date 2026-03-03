@@ -6,20 +6,20 @@
 
   <ul class="dropdown-menu" aria-labelledby="toolsDropdown" style="transform: translateX(-4em);">
     @if (aaService.principal.getValue().isLocalAdmin || aaService.principal.getValue().isAdmin) {
-    <li><a class="dropdown-item" href='https://gui.inge.mpdl.mpg.de/admintool/' target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined">
+    <li><a class="dropdown-item" [href]="env.inge_uri + '/admintool/'" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined">
           settings
         </span> {{ 'header.tools.admintool' | translate }}</a>
     </li>
       <hr class="m-1"/>
     }
-    <li><a class="dropdown-item" href='https://gui.inge.mpdl.mpg.de/cone/' target="_blank" rel="noopener noreferrer">
+    <li><a class="dropdown-item" [href]="env.cone_instance_uri" target="_blank" rel="noopener noreferrer">
         <svg height="24px" width="24px">
           <use href="assets/icons/icons.svg#cone-bw"></use>
         </svg> {{ 'header.tools.cone' | translate}}</a>
     </li>
     <hr class="m-1"/>
 
-    <li><a class="dropdown-item" href='https://pure.mpg.de/csl-editor/' target="_blank" rel="noopener noreferrer">
+    <li><a class="dropdown-item" [href]="env.inge_uri + '/csl-editor/'" target="_blank" rel="noopener noreferrer">
       <svg height="24px" width="24px">
           <use href="assets/icons/icons.svg#format_quote"></use>
       </svg><span> {{'header.tools.cslEditor' | translate}}</span></a>
@@ -30,7 +30,7 @@
           api
         </span> {{'header.tools.restApi' | translate}}
     </li>
-    <li><a class="dropdown-item" href='https://gui.inge.mpdl.mpg.de/rest/swagger-ui/index.html' target="_blank" rel="noopener noreferrer">
+    <li><a class="dropdown-item" [href]="env.inge_rest_uri + '/swagger-ui/index.html'" target="_blank" rel="noopener noreferrer">
       <span class="ps-4">&bull; {{'header.tools.restApi.swagger' | translate}}</span></a>
     </li>
     <li><a class="dropdown-item" href='https://colab.mpdl.mpg.de/mediawiki/INGe_REST_API_Documentation' target="_blank" rel="noopener noreferrer">
@@ -42,10 +42,10 @@
           stream
         </span> {{'header.tools.oaiPmh' | translate}}
     </li>
-    <li><a class="dropdown-item" href='https://gui.inge.mpdl.mpg.de/oai/provider' target="_blank" rel="noopener noreferrer">
+    <li><a class="dropdown-item" [href]="env.inge_uri + '/oai/provider'" target="_blank" rel="noopener noreferrer">
       <span class="ps-4">&bull; {{'header.tools.oaiPmh.url' | translate}}</span></a>
     </li>
-    <li><a class="dropdown-item" href='https://gui.inge.mpdl.mpg.de/oai/oaisearch.do' target="_blank" rel="noopener noreferrer">
+    <li><a class="dropdown-item" [href]="env.inge_uri + '/oai/oaisearch.do'" target="_blank" rel="noopener noreferrer">
       <span class="ps-4">&bull; {{'header.tools.oaiPmh.search' | translate}}</span></a>
     </li>
 

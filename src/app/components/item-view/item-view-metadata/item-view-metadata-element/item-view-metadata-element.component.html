@@ -1,7 +1,7 @@
 @if(condition) {
   <div class="row mb-2">
   <div class="{{sub ? 'col-3' : 'col-2'}} text-break">
-    <span [class.fw-bold]="highlight" [class.float-end]="sub">
+    <span [class.fw-bold]="highlight" [class.float-end]="sub" class="text-end">
       <ng-content select="[label]"/>
     </span>
   </div>

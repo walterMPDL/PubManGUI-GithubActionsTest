@@ -25,7 +25,8 @@
     "TOKEN_INVALID": "Das Token ist ungültig",
     "TRANSFORMATION_ERROR": "Fehler bei der Transformation in das ausgewählte Format",
     "USER_NOT_FOUND": "Der Nutzer wurde nicht gefunden",
-    "VALIDATION_ERROR": "Validierungsfehler"
+    "VALIDATION_ERROR": "Validierungsfehler",
+    "BATCH_USER_LOCKED": "Es wurde bereits ein Batch-Prozess durch Sie gestartet. Bitte warten Sie, bis dieser abgeschlossen ist, bevor Sie einen neuen starten."
   },
   "backendValidation": {
     "AlternativeTitleNotProvided": "Fehlende Nachricht (keine entsprechende deutsche Übersetzung gefunden)",
@@ -521,6 +522,11 @@
     "RIS_STRING": "RIS",
     "WOS_STRING": "WoS"
   },
+  "ImportFormatConfiguration": {
+    "Flavor": "Import-Schema",
+    "import-name": "Import-Schema",
+    "Files_to_Import": "Files to import"
+  },
   "ImportMessage": {
     "AlternativeTitleNotProvided": "Ein alternativer Titel fehlt.",
     "ComponentContentCategoryNotProvided": "Bei einer angehängten Datei fehlt die Spezifizierung des Inhalts (z.B. Abstract, Preprint, usw.).",
@@ -897,7 +903,8 @@
     "delete": "Löschen",
     "saveCurrent": "Aktuelle Suchmaske speichern",
     "savedMasks": "Meine Suchmasken",
-    "title": "Gespeicherte Suchen"
+    "title": "Gespeicherte Suchen",
+    "update": "Mit der aktuellen Suchmaske überschreiben"
   },
   "Search": {
     "adminMode": "Admin",

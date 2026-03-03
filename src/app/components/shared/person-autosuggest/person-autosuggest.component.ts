@@ -117,7 +117,7 @@ export class PersonAutosuggestComponent {
   }
 
   updatePerson(coneId: string, ouName: string) {
-    const selected_ou = ouName.substring(ouName.indexOf('(') + 1, ouName.lastIndexOf(','));
+    const selected_ou = ouName.includes(',') ? ouName.substring(ouName.indexOf('(') + 1, ouName.lastIndexOf(',')) : ouName;
     this.coneService.getPersonResource(coneId).subscribe(
       (person: PersonResource) => {
         if (Array.isArray(person.http_purl_org_dc_elements_1_1_identifier)) {

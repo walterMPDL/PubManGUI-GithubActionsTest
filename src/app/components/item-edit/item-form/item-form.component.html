@@ -1,4 +1,5 @@
-@if (aaService.principal.getValue().isDepositor || aaService.principal.getValue().isModerator)
+@if (aaService.principal.getValue().isDepositor || aaService.principal.getValue().isModerator ||
+aaService.principal.getValue().isAdmin)
 {
 <pure-item-badges [item]="item" [showVersion]="true" [showMetadata]="false"></pure-item-badges>
 <div class="container-fluid">
@@ -200,8 +201,10 @@
             <span class="visually-hidden">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
-            <li><button type="button" class="dropdown-item" value="save" (click)="submit('save')">{{'common.save' | translate}}</button></li>
-            <li><button type="button" class="dropdown-item" value="save_to_view" (click)="submit('save_to_view')">{{'common.saveToView' |
+            <li><button type="button" class="dropdown-item" value="save" (click)="submit('save')">{{'common.save' |
+                translate}}</button></li>
+            <li><button type="button" class="dropdown-item" value="save_to_view"
+                (click)="submit('save_to_view')">{{'common.saveToView' |
                 translate}}</button></li>
           </ul>
         </div>
@@ -224,9 +227,8 @@
   </form>
 </div>
 
-
-
-
+<!-- Debug output for admins -->
+@if (aaService.principal.getValue().isAdmin) {
 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse"
   [attr.data-bs-target]="'#collapseJSON'" aria-expanded="true" aria-controls="collapseOne">Show JSON</button>
 
@@ -242,6 +244,7 @@
   </div>
 
 </div>
+}
 
 } @else {
 <!--TODO No Depositor/Admin rights Page/Message-->

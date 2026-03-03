@@ -4,27 +4,35 @@
     @if (log.state === state.RUNNING) {
 
         <td class="col-2 d-flex flex-column flex-xl-row justify-content-between ps-1">
-            <span class="d-flex d-none d-lg-inline">{{ 'BatchProcessLogHeaderState.' + batchSvc.getProcessLog().state | translate }}</span>
+            <span class="d-flex d-none d-lg-inline">{{ 'BatchProcessLogHeaderState.' + ( batchSvc.getProcessLog().state || 'INITIALIZED' )| translate }}</span>
             <div>
-             @if (batchSvc.getProcessLog().state === state.FINISHED) {
-                <span class="material-symbols-outlined text-success pe-1">check_circle</span>
-            } @else if(batchSvc.getProcessLog().state !== state.RUNNING) {
-                <span class="material-symbols-outlined text-danger pe-1">cancel</span>
-            }
-            </div>
-
-            @if (log.batchLogHeaderId === batchSvc.getProcessLog().batchLogHeaderId) {
-                @if (batchSvc.isProcessRunning()) {
-                    <span>
-                        {{ batchSvc.getProcessLog().percentageOfProcessedItems -
-                            calculateProcessedStep(batchSvc.getProcessLog().numberOfItems) }}&percnt;
-                    </span>
+            @if (batchSvc.getProcessLog().state) {   
+                @if(batchSvc.getProcessLog().state === state.RUNNING) {
+                    @if (log.batchLogHeaderId === batchSvc.getProcessLog().batchLogHeaderId) {
+                        @if (batchSvc.isProcessRunning()) {
+                            <span>
+                                {{ batchSvc.getProcessLog().percentageOfProcessedItems -
+                                    calculateProcessedStep(batchSvc.getProcessLog().numberOfItems) }}&percnt;
+                            </span>
+                        } 
+                    } @else {
+                        <span class="material-symbols-outlined text-secondary pe-1 d-flex justify-content-end pt-1" title="Something gone wrong!">
+                            error
+                        </span>
+                    }
+                } @else {                  
+                    @if (batchSvc.getProcessLog().state === state.FINISHED) {
+                        <span class="material-symbols-outlined text-success pe-1">check_circle</span>
+                    } @else {
+                        <span class="material-symbols-outlined text-danger pe-1">cancel</span>
+                    }     
                 }
             } @else {
-                <span class="material-symbols-outlined pe-1 d-flex justify-content-end" title="Something gone wrong!">
+                <span class="material-symbols-outlined text-secondary pe-1 d-flex justify-content-end pt-1" title="Something gone wrong!">
                     error
                 </span>
-            }
+            }    
+            </div>
         </td>
 
     } @else {

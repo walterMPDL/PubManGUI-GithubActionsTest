@@ -79,7 +79,7 @@ export default class ImportComponent implements OnInit {
     this.importsSvc.getFormatConfiguration(format).subscribe(response => {
       this.formatObject = response;
       this.changeDetector.detectChanges();
-      if (format !== this.lastFormat) {
+      if (this.formatObject && this.formatObject.format !== this.lastFormat) {
         this.setSelectDefaultOption();
         this.setCoNE();
         this.lastFormat = format;

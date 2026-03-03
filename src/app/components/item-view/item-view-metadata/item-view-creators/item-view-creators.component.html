@@ -49,7 +49,7 @@
     }
 
     <pure-item-view-metadata-element [sub]="true" [condition]="affiliations.length > 0">
-      <span label>{{ 'MetadataFields.affiliations' | translate }}</span>
+      <span class="text-end" label>{{ 'MetadataFields.affiliations' | translate }}</span>
       <span content>
         <div class="list-group">
          @for (aff of affiliations; track $index; let i = $index) {

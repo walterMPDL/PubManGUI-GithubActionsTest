@@ -6,6 +6,7 @@ import { OrganizationsService } from './organizations.service';
 import { AccountUserDbVO, GrantVO } from "../../model/inge";
 import { PubmanSearchableGenericRestClientService } from "./pubman-searchable-generic-rest-client.service";
 import { HttpOptions } from "./pubman-generic-rest-client.service";
+import {HttpParams} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -47,11 +48,14 @@ export class UsersService extends PubmanSearchableGenericRestClientService<Accou
     return this.httpPut(path, body, opts);
   }
 
-  changePassword(userId: string, password: string, opts?: HttpOptions): Observable<AccountUserDbVO> {
+  changePassword(userId: string, password: string, passwordChangeFlag: boolean, opts?: HttpOptions): Observable<AccountUserDbVO> {
     const path = this.subPath + '/' + userId + '/password';
     const body = password;
+    let params: HttpParams = new HttpParams()
+      .set('passwordChangeFlag', passwordChangeFlag);
+    const mergedOpts = this.createOrMergeHttpOptions(opts, {params: params});
 
-    return this.httpPutText(path, body, opts);
+    return this.httpPutText(path, body, mergedOpts);
   }
 
   changePasswordOneTime(username: string, oneTimePassword: string, newPassword: string, opts?: HttpOptions): Observable<any> {

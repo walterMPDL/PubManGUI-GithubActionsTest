@@ -382,9 +382,11 @@ export class ItemFormComponent implements OnInit {
     }
     else {
       this.fbs.updateItem_FG(this.form, this.item)
+      /*
       if (!this.isNewItem) {
         this.listStateService.itemUpdated.next(this.objectId);
       }
+       */
     }
 
 

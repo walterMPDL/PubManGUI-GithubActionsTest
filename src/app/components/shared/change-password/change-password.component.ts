@@ -76,7 +76,7 @@ export class ChangePasswordComponent {
 
     const newPasswd = this.changePasswordForm.get('newPassword1')?.value;
     if(this.principal) {
-      passWordChange$ = this.usersService.changePassword(this.principal?.user?.objectId!, newPasswd, {globalErrorDisplay: false});
+      passWordChange$ = this.usersService.changePassword(this.principal?.user?.objectId!, newPasswd, true, {globalErrorDisplay: false});
     }
     else if(this.username && this.oneTimePassword) {
       passWordChange$ = this.usersService.changePasswordOneTime(this.username, this.oneTimePassword, newPasswd, {globalErrorDisplay: false});

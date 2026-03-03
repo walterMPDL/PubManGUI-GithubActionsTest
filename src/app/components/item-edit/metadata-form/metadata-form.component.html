@@ -297,11 +297,9 @@
                         <div class="col-sm" id="languages">
                             <ng-container formArrayName="languages">
                                 @for (language of languages.controls; track languageIndex; let languageIndex = $index) {
-                                <ng-container [formGroupName]="languageIndex">
                                     <pure-language-form [language_form]="language" [index]="languageIndex"
                                         [multi]="true" [index_length]="languages.controls.length"
                                         (notice)="handleLanguageNotification($event)"></pure-language-form>
-                                </ng-container>
                                 }
                                 @empty {
                                 <pure-add-remove-buttons [index]="0" [del_val]="'hidden'"

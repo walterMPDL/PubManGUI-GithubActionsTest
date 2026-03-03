@@ -14,7 +14,7 @@ export class ItemListStateService {
   This behaviour subject should be called whenever changes to an item were made.
   The list will subscribe to this and update the item in the list.
    */
-  itemUpdated: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
+  //itemUpdated: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
 
 
   currentFullQuery: any = undefined;

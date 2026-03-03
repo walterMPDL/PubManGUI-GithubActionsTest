@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
       size: 8
     };
 
-    this.latestReleasedItems = this.itemsService.elasticSearch(query).pipe(
+    this.latestReleasedItems = this.itemsService.elasticSearch(query, {withCredentials: false}).pipe(
       map(result => result.hits.hits.map((record: any) => record._source as ItemVersionVO)),
     );
   }
@@ -126,7 +126,7 @@ export class HomeComponent implements OnInit {
     size: 0
   };
 
-  this.itemsService.elasticSearch(agg).subscribe(result => {
+  this.itemsService.elasticSearch(agg,{withCredentials: false}).subscribe(result => {
 
     this.totalPublications = result.hits.total.value;
     const buckets = result.aggregations['sterms#publications_by_genre'].buckets;

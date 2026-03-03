@@ -37,7 +37,7 @@ export class ItemStateFilterDirective extends ItemFilterDirective {
   }
 
   getFilterEvent(selectedValue: string|undefined) : FilterEvent {
-    console.log("selectedValue: " + selectedValue);
+    //console.log("selectedValue: " + selectedValue);
     let query = undefined;
     if(ItemVersionState.WITHDRAWN === selectedValue) {
       query =

@@ -602,17 +602,17 @@ export class FormBuilderService {
     );
 
     const creatorsArray = form.get('creators') as FormArray;
-    this.updateFormArray(creatorsArray, metadata?.creators || [null], (creator, fg) =>
+    this.updateFormArray(creatorsArray, metadata?.creators || [], (creator, fg) =>
       fg ? this.updateCreator_FG(fg as FormGroup<ControlType<CreatorVO>>, creator) : this.creator_FG(creator)
     );
 
     const identifiersArray = form.get('identifiers') as FormArray;
-    this.updateFormArray(identifiersArray, metadata?.identifiers || [null], (id, fg) =>
+    this.updateFormArray(identifiersArray, metadata?.identifiers || [], (id, fg) =>
       fg ? this.updateIdentifier_FG(fg as FormGroup<ControlType<IdentifierVO>>, id) : this.identifier_FG(id)
     );
 
     const languagesArray = form.get('languages') as FormArray;
-    this.updatePrimitiveArray(languagesArray, metadata?.languages || [null]);
+    this.updatePrimitiveArray(languagesArray, metadata?.languages || []);
 
     const sourcesArray = form.get('sources') as FormArray;
     this.updateFormArray(sourcesArray, metadata?.sources || [], (s, fg) =>
@@ -625,12 +625,12 @@ export class FormBuilderService {
     );
 
     const abstractsArray = form.get('abstracts') as FormArray;
-    this.updateFormArray(abstractsArray, metadata?.abstracts || [null], (a, fg) =>
+    this.updateFormArray(abstractsArray, metadata?.abstracts || [], (a, fg) =>
       fg ? this.updateAbstract_FG(fg as FormGroup<ControlType<AbstractVO>>, a) : this.abstract_FG(a)
     );
 
     const projectInfoArray = form.get('projectInfo') as FormArray;
-    this.updateFormArray(projectInfoArray, metadata?.projectInfo || [null], (pi, fg) =>
+    this.updateFormArray(projectInfoArray, metadata?.projectInfo || [], (pi, fg) =>
       fg ? this.updateProjectInfo_FG(fg as FormGroup<ControlType<ProjectInfoVO>>, pi) : this.project_info_FG(pi)
     );
 
@@ -670,7 +670,7 @@ export class FormBuilderService {
     this.updatePublishingInfo_FG(form.get('publishingInfo') as FormGroup<ControlType<PublishingInfoVO>>, source?.publishingInfo || null);
 
     const identifiersArray = form.get('identifiers') as FormArray;
-    this.updateFormArray(identifiersArray, source?.identifiers || [null], (i, fg) =>
+    this.updateFormArray(identifiersArray, source?.identifiers || [], (i, fg) =>
       fg ? this.updateIdentifier_FG(fg as FormGroup<ControlType<IdentifierVO>>, i) : this.identifier_FG(i)
     );
 

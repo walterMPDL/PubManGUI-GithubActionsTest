@@ -289,7 +289,12 @@ export class ExportItemsComponent {
   }
 
   get curlUrl() {
-    const url = new URL(environment.inge_rest_uri + "/items/search");
+    let url = undefined;
+    if(environment.inge_rest_uri?.startsWith("http")) {
+      url = new URL(environment.inge_rest_uri + "/items/search");
+    } else {
+      url = new URL(environment.inge_rest_uri + "/items/search", window.location.origin);
+    }
 
     if(this.selectedExportType.value) url.searchParams.append("format", this.selectedExportType.value);
     if(!this.isFormat) {

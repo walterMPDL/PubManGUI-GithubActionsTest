@@ -316,6 +316,14 @@ export class JournalSearchCriterion extends StandardSearchCriterion {
   override getElasticSearchNestedPath(): string | undefined {
     return "metadata.sources";
   }
+
+  handleJournalSuggest(item: any) {
+    const title = item?.value?.substring(0, item.value.lastIndexOf(";"));
+    if(title) {
+      this.content.get("text")?.setValue('"' + title + '"');
+    }
+
+  }
 }
 
 export class LanguageSearchCriterion extends StandardSearchCriterion {

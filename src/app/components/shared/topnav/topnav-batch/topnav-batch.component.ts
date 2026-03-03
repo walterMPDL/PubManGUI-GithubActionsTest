@@ -30,8 +30,8 @@ export class TopnavBatchComponent {
   translateSvc = inject(TranslateService);
 
   addToBatchDatasets() {
-    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));
-    if (selected) {
+    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));;
+    if (selected.length) {
       const added = this.batchSvc.addItems(selected);
       if (this.resetSelectionAfterAction)
         this.itemSelectionService.resetList();
@@ -41,60 +41,40 @@ export class TopnavBatchComponent {
         + ((selected.length! - added) > 0 ? ", " + `${selected.length! - added} `
           + this.translateSvc.instant(_('common.datasets.duplicated'))  + "." : '')
       );
-      /*
-      this.msgSvc.success(selected.length + ' '
-        + this.translateSvc.instant(_('batch.datasets.selected')) + '\n' + added + ' '
-        + this.translateSvc.instant(_('batch.datasets.filled'))
-        + ((selected.length! - added) > 0 ? ", " + `${selected.length! - added} `
-        + this.translateSvc.instant(_('batch.datasets.duplicated'))  + "." : '')
-      );
-
-       */
     } else {
       this.msgSvc.warning(this.translateSvc.instant(_('batch.datasets.empty')) + '!');
     }
   }
 
   removeFromBatchDatasets() {
-    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));
-    if (selected) {
+    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));;
+    if (selected.length) {
       const removed = this.batchSvc.removeItems(selected);
       if (this.resetSelectionAfterAction)
         this.itemSelectionService.resetList();
       this.msgSvc.success(
         this.translateSvc.instant('batch.name') + ": " +
-        //selected.length + ' '
-        //+ this.translateSvc.instant(_('common.datasets.selected')) + '\n' +
         removed + ' ' + this.translateSvc.instant(_('common.datasets.removed'))
         + ((selected.length! - removed) > 0 ? ", " + `${selected.length! - removed} `
           + this.translateSvc.instant(_('common.datasets.missing')) + "." : '')
       );
-      /*
-      this.msgSvc.success(selected.length + ' '
-        + this.translateSvc.instant(_('batch.datasets.selected')) + '\n' + removed + ' '
-        + this.translateSvc.instant(_('batch.datasets.removed'))
-        + ((selected.length! - removed) > 0 ? ", " + `${selected.length! - removed} `
-        + this.translateSvc.instant(_('batch.datasets.missing')) + "." : '')
-      );
-
-       */
     } else {
       this.msgSvc.warning(this.translateSvc.instant(_('batch.datasets.empty')) + '!');
     }
   }
 
   get isAdd() {
-    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));
+    const selected: string[] = this.itemSelectionService.selectedIds$.value;
     if (selected.length > 0) {
-      return selected.some(id => !this.batchSvc.items.includes(id))
+      return selected.some(id => !this.batchSvc.items.includes(versionIdToObjectId(id)))
     }
     return false;
   }
 
   get isRemove() {
-    const selected: string[] = this.itemSelectionService.selectedIds$.value.map(id => versionIdToObjectId(id));
+    const selected: string[] = this.itemSelectionService.selectedIds$.value;
     if (selected.length > 0) {
-      return selected.some(id => this.batchSvc.items.includes(id))
+      return selected.some(id => this.batchSvc.items.includes(versionIdToObjectId(id)))
     }
     return false;
   }

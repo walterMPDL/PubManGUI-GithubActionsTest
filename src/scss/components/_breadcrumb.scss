@@ -1,12 +1,15 @@
 pure-breadcrumb {
   background: none;
   font-size: 0.9em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: flex;
 
   span {
     text-wrap: nowrap;
     text-decoration: none;
     color: var(--bs-body-color);
-    margin: auto 0.3rem;
+    margin: auto 0.1rem;
 
     &:hover:not(.last) {
       color:  var(--bs-dark) !important;

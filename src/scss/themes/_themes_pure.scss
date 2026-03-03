@@ -51,11 +51,6 @@
     color: $link-hover-color;
   }
 
-  .mat-mdc-chip.mat-mdc-standard-chip {
-    --mat-chip-container-height: 24px;
-    background-color: $body-secondary-bg;
-    border: 1px solid lightgray;
-  }
 
   .overlay-backdrop {
     background-color: rgba(0, 0, 0, 0.5);
@@ -200,12 +195,6 @@
 
   .list-group-item:hover {
     background-color: $body-tertiary-bg-dark;
-  }
-
-  .mat-mdc-chip.mat-mdc-standard-chip {
-    --mat-chip-container-height: 24px;
-    background-color: $body-tertiary-bg-dark;
-    border: 1px solid $border-color-dark;
   }
 
   .overlay-backdrop {

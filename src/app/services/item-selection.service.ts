@@ -13,7 +13,7 @@ export class ItemSelectionService {
     //Empty list when navigating to other page
     router.events.subscribe(ev => {
       if (ev instanceof NavigationEnd) {
-        console.log("Reset Selection List");
+        //console.log("Reset Selection List");
         this.resetList();
       }
     })

@@ -25,7 +25,8 @@
     "TOKEN_INVALID": "The token is invalid",
     "TRANSFORMATION_ERROR": "Error while transforming to the selected format",
     "USER_NOT_FOUND": "The user was not found",
-    "VALIDATION_ERROR": "Validation error"
+    "VALIDATION_ERROR": "Validation error",
+    "BATCH_USER_LOCKED": "A batch process was already started by you. Please wait until it is finished."
   },
   "backendValidation": {
     "AlternativeTitleNotProvided": "Alternativtitel ist nicht angegeben (keine entsprechende deutsche Übersetzung gefunden)",
@@ -521,6 +522,11 @@
     "RIS_STRING": "RIS",
     "WOS_STRING": "WoS"
   },
+  "ImportFormatConfiguration": {
+    "Flavor": "Import scheme",
+    "import-name": "Import scheme",
+    "Files_to_Import": "Files to import"
+  },
   "ImportMessage": {
     "AlternativeTitleNotProvided": "An alternative title is missing.",
     "ComponentContentCategoryNotProvided": "An attached file is missing a content type (e.g. Abstract, Preprint, etc.).",
@@ -897,7 +903,8 @@
     "delete": "Delete",
     "saveCurrent": "Save current search mask",
     "savedMasks": "My search masks",
-    "title": "Saved Searches"
+    "title": "Saved Searches",
+    "update": "Overwrite with current search mask"
   },
   "Search": {
     "adminMode": "Admin",

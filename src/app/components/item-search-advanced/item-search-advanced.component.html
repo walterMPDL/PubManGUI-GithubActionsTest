@@ -1,5 +1,4 @@
-
-<ng-template [ngTemplateOutlet]="searchButtons"/>
+<ng-template [ngTemplateOutlet]="searchButtons" />
 
 
 <div class="accordion">
@@ -7,58 +6,61 @@
 
 
     @if(aaService.isLoggedIn) {
-      <!--Contexts -->
-      <div class="accordion-item border-0">
+    <!--Contexts -->
+    <div class="accordion-item border-0">
 
-        <h2 class="accordion-header">
-          <button class="accordion-button rounded-0" type="button" data-bs-toggle="collapse"
-            data-bs-target="#accordionBodyContextsGroup" aria-expanded="true"
-            aria-controls="accordionBodyContextsGroup">
-            {{ 'Search.searchMode' | translate}}
-          </button>
-        </h2>
-        <div id="accordionBodyContextsGroup" class="accordion-collapse collapse show">
+      <h2 class="accordion-header">
+        <button class="accordion-button rounded-0" type="button" data-bs-toggle="collapse"
+          data-bs-target="#accordionBodyContextsGroup" aria-expanded="true" aria-controls="accordionBodyContextsGroup">
+          {{ 'Search.searchMode' | translate}}
+        </button>
+      </h2>
+      <div id="accordionBodyContextsGroup" class="accordion-collapse collapse show">
 
-          <div class="accordion-body mt-3 mb-3">
+        <div class="accordion-body mt-3 mb-3">
 
-            <div class="btn-group mb-2" role="group" aria-label="publicAdminSwitch">
-              <button type="button" class="btn btn-outline-primary {{isPublic ? 'active' : ''}}" (click)="switchToAdmin(false)">
-                {{'Search.publicMode' | translate}}</button>
-              <button type="button" class="btn btn-outline-primary {{isAdmin ? 'active' : ''}}" (click)="switchToAdmin(true)">{{'Search.adminMode' | translate}}</button>
-
-            </div>
-
-            <hr/>
-            <h5>{{ 'MetadataFields.context' | translate }}</h5>
-            <div class="row mb-3">
-              @for (context of contextListSearchCriterion.contextOptions | keyvalue; track context; let i = $index; ) {
-                <div class="col-md-6 col-xxl-4">
-                  <div class="form-check">
-                    <input id="context{{i}}" class="form-check-input" type="checkbox"
-                      [formControl]="$any(contextListSearchCriterion.contextListFormGroup).get(context.key)"/>
-                    <label class="form-check-label" for="context{{i}}">{{ context.value.name }} ({{ context.value.objectId }})</label>
-                  </div>
-                </div>
-              }
-            </div>
-
-            <hr/>
-            <h5>{{ 'common.item' | translate }} {{ 'MetadataFields.state' | translate}}</h5>
-            <div class="row mb-3">
-              @for (pubState of itemStateListSearchCriterion.itemStateOptions; track pubState; let i = $index; ) {
-                <div class="col-md-6 col-xxl-4">
-                  <div class="form-check">
-                    <input id="itemStateName{{i}}" class="form-check-input" type="checkbox"
-                      [formControl]="$any(itemStateListSearchCriterion.publicationStatesFormGroup).get(pubState)"/>
-                    <label class="form-check-label" for="itemStateName{{i}}">{{ 'ItemState.' + pubState | translate }}</label>
-                  </div>
-                </div>
-              }
-            </div>
+          <div class="btn-group mb-2" role="group" aria-label="publicAdminSwitch">
+            <button type="button" class="btn btn-outline-primary {{isPublic ? 'active' : ''}}"
+              (click)="switchToAdmin(false)">
+              {{'Search.publicMode' | translate}}</button>
+            <button type="button" class="btn btn-outline-primary {{isAdmin ? 'active' : ''}}"
+              (click)="switchToAdmin(true)">{{'Search.adminMode' | translate}}</button>
 
           </div>
+
+          <hr />
+          <h5>{{ 'MetadataFields.context' | translate }}</h5>
+          <div class="row mb-3">
+            @for (context of contextListSearchCriterion.contextOptions | keyvalue; track context; let i = $index; ) {
+            <div class="col-md-6 col-xxl-4">
+              <div class="form-check">
+                <input id="context{{i}}" class="form-check-input" type="checkbox"
+                  [formControl]="$any(contextListSearchCriterion.contextListFormGroup).get(context.key)" />
+                <label class="form-check-label" for="context{{i}}">{{ context.value.name }} ({{ context.value.objectId
+                  }})</label>
+              </div>
+            </div>
+            }
+          </div>
+
+          <hr />
+          <h5>{{ 'common.item' | translate }} {{ 'MetadataFields.state' | translate}}</h5>
+          <div class="row mb-3">
+            @for (pubState of itemStateListSearchCriterion.itemStateOptions; track pubState; let i = $index; ) {
+            <div class="col-md-6 col-xxl-4">
+              <div class="form-check">
+                <input id="itemStateName{{i}}" class="form-check-input" type="checkbox"
+                  [formControl]="$any(itemStateListSearchCriterion.publicationStatesFormGroup).get(pubState)" />
+                <label class="form-check-label" for="itemStateName{{i}}">{{ 'ItemState.' + pubState | translate
+                  }}</label>
+              </div>
+            </div>
+            }
+          </div>
+
         </div>
       </div>
+    </div>
 
     }
 
@@ -67,8 +69,7 @@
 
       <h2 class="accordion-header">
         <button class="accordion-button rounded-0" type="button" data-bs-toggle="collapse"
-          data-bs-target="#accordionBodyStandardGroup" aria-expanded="true"
-          aria-controls="accordionBodyStandardGroup">
+          data-bs-target="#accordionBodyStandardGroup" aria-expanded="true" aria-controls="accordionBodyStandardGroup">
           {{'Search.searchTerms' | translate}}
         </button>
       </h2>
@@ -77,81 +78,79 @@
 
           @for (currentFormGroup of flexibleFields.controls; track currentFormGroup; let i = $index; ) {
 
-            <div [formGroupName]="i" class="d-sm-flex flex-sm-row gap-1 mb-3 align-items-center"
-              style="margin-left: {{$any(currentFormGroup).level * 15}}px">
+          <div [formGroupName]="i" class="d-sm-flex flex-sm-row gap-1 mb-3 align-items-center"
+            style="margin-left: {{$any(currentFormGroup).level * 15}}px">
 
-              @if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.OPERATOR) {
-                @if (i != 0) {
+            @if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.OPERATOR) {
+            @if (i != 0) {
 
-                  <!--Operator -->
-                  <div class="col-auto">
-                    <select class="form-select" formControlName="type"
-                      (change)="changeOperator(i, t.value)" #t>
-                      <option value="and">{{'Search.AND' | translate}}</option>
-                      <option value="or">{{'Search.OR' | translate}}</option>
-                      <option value="not">{{'Search.NOT' | translate}}</option>
-                    </select>
-                  </div>
+            <!--Operator -->
+            <div class="col-auto">
+              <select class="form-select" formControlName="type" (change)="changeOperator(i, t.value)" #t>
+                <option value="and">{{'Search.AND' | translate}}</option>
+                <option value="or">{{'Search.OR' | translate}}</option>
+                <option value="not">{{'Search.NOT' | translate}}</option>
+              </select>
+            </div>
 
-                }
-              } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.PARENTHESIS) {
-                <!-- Remove parenthesis button -->
-                <div class="col-sm-1 mb-auto">
-                  <span>{{ $any(currentFormGroup).type === 'opening_parenthesis' ? '(' : ')' }}</span>
-                  <button type="button" class="btn btn-sm btn-outline-secondary p-0 m-1" (click)="removeParenthesis(i)">
-                    <span class="bi bi-x"></span>
-                  </button>
-                </div>
+            }
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.PARENTHESIS) {
+            <!-- Remove parenthesis button -->
+            <div class="col-sm-1 mb-auto">
+              <span>{{ $any(currentFormGroup).type === 'opening_parenthesis' ? '(' : ')' }}</span>
+              <button type="button" class="btn btn-sm btn-outline-secondary p-0 m-1" (click)="removeParenthesis(i)">
+                <span class="bi bi-x"></span>
+              </button>
+            </div>
 
-              } @else {
-                <div class="col-auto mb-auto">
-                  <!-- Add parenthesis button -->
-                  @if (currentlyOpenedParenthesis === undefined) {
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                      [disabled]="currentlyOpenedParenthesis!==undefined"
-                      (click)="addOpeningParenthesis(i)">
-                      (
-                    </button>
-                  }
-                </div>
-                <div class="col-sm-2 mb-auto">
-                  <select class="form-select" formControlName="type" (change)="changeType(i, t.value)" #t>
-                    <option value="title">{{ 'MetadataFields.title' | translate }}</option>
-                    <option value="keyword">{{ 'MetadataFields.keywords' | translate }}</option>
-                    <option value="classification">{{ 'MetadataFields.classification' | translate }}</option>
-                    <option value="anyField">{{ 'Search.anyField' | translate }}</option>
-                    <option value="fulltext">{{ 'Search.fulltext' | translate}}</option>
-                    <option value="person">{{ 'MetadataFields.creators' | translate }}</option>
-                    <option value="orcid">ORCID</option>
-                    <option value="organization">{{ 'MetadataFields.organization' | translate }}</option>
-                    <optgroup label="{{ 'MetadataFields.date' | translate }}">
-                      <option value="anyDate">{{ 'MetadataFields.date' | translate }}</option>
-                      <option value="publishedInPrintDate">{{ 'MetadataFields.datePublishedInPrint' | translate }}</option>
-                      <option value="publishedDate">{{ 'MetadataFields.datePublishedOnline' | translate }}</option>
-                      <option value="acceptedDate">{{ 'MetadataFields.dateAccepted' | translate }}</option>
-                      <option value="submittedDate">{{ 'MetadataFields.dateSubmitted' | translate }}</option>
-                      <option value="modifiedDate">{{ 'MetadataFields.dateModified' | translate }}</option>
-                      <option value="createdDate">{{ 'MetadataFields.dateCreated' | translate }}</option>
-                      <option value="modifiedInternalDate">{{ 'Search.dateModifiedInternal' | translate }}</option>
-                      <option value="createdInternalDate">{{ 'Search.dateCreatedInternal' | translate }}</option>
-                    </optgroup>
-                    <optgroup label="{{ 'MetadataFields.event' | translate }}">
-                      <option value="eventTitle">{{ 'MetadataFields.eventTitle' | translate }}</option>
-                      <option value="eventStartDate">{{ 'MetadataFields.eventStartDate' | translate }}</option>
-                      <option value="eventEndDate">{{ 'MetadataFields.eventEndDate' | translate }}</option>
-                    </optgroup>
-                    <option value="genre">{{ 'MetadataFields.genre' | translate }}</option>
-                    <option value="reviewMethod">{{ 'MetadataFields.reviewMethod' | translate }}</option>
-                    <option value="language">{{ 'MetadataFields.languages' | translate }}</option>
-                    <option value="source">{{ 'MetadataFields.source' | translate }}</option>
-                    <option value="journal">{{ 'MetadataFields.journal' | translate }}</option>
-                    <option value="localTag">{{ 'MetadataFields.localTags' | translate }}</option>
-                    <option value="identifier">{{ 'MetadataFields.identifiers' | translate }}</option>
-                    <option value="collection">{{ 'MetadataFields.context' | translate }}</option>
-                    <option value="projectInfo">{{ 'MetadataFields.projectInfo' | translate }}</option>
-                  </select>
-                  <!--Type -->
-                  <!--
+            } @else {
+            <div class="col-auto mb-auto">
+              <!-- Add parenthesis button -->
+              @if (currentlyOpenedParenthesis === undefined) {
+              <button type="button" class="btn btn-sm btn-outline-secondary"
+                [disabled]="currentlyOpenedParenthesis!==undefined" (click)="addOpeningParenthesis(i)">
+                (
+              </button>
+              }
+            </div>
+            <div class="col-sm-2 mb-auto">
+              <select class="form-select" formControlName="type" (change)="changeType(i, t.value)" #t>
+                <option value="title">{{ 'MetadataFields.title' | translate }}</option>
+                <option value="keyword">{{ 'MetadataFields.keywords' | translate }}</option>
+                <option value="classification">{{ 'MetadataFields.classification' | translate }}</option>
+                <option value="anyField">{{ 'Search.anyField' | translate }}</option>
+                <option value="fulltext">{{ 'Search.fulltext' | translate}}</option>
+                <option value="person">{{ 'MetadataFields.creators' | translate }}</option>
+                <option value="orcid">ORCID</option>
+                <option value="organization">{{ 'MetadataFields.organization' | translate }}</option>
+                <optgroup label="{{ 'MetadataFields.date' | translate }}">
+                  <option value="anyDate">{{ 'MetadataFields.date' | translate }}</option>
+                  <option value="publishedInPrintDate">{{ 'MetadataFields.datePublishedInPrint' | translate }}</option>
+                  <option value="publishedDate">{{ 'MetadataFields.datePublishedOnline' | translate }}</option>
+                  <option value="acceptedDate">{{ 'MetadataFields.dateAccepted' | translate }}</option>
+                  <option value="submittedDate">{{ 'MetadataFields.dateSubmitted' | translate }}</option>
+                  <option value="modifiedDate">{{ 'MetadataFields.dateModified' | translate }}</option>
+                  <option value="createdDate">{{ 'MetadataFields.dateCreated' | translate }}</option>
+                  <option value="modifiedInternalDate">{{ 'Search.dateModifiedInternal' | translate }}</option>
+                  <option value="createdInternalDate">{{ 'Search.dateCreatedInternal' | translate }}</option>
+                </optgroup>
+                <optgroup label="{{ 'MetadataFields.event' | translate }}">
+                  <option value="eventTitle">{{ 'MetadataFields.eventTitle' | translate }}</option>
+                  <option value="eventStartDate">{{ 'MetadataFields.eventStartDate' | translate }}</option>
+                  <option value="eventEndDate">{{ 'MetadataFields.eventEndDate' | translate }}</option>
+                </optgroup>
+                <option value="genre">{{ 'MetadataFields.genre' | translate }}</option>
+                <option value="reviewMethod">{{ 'MetadataFields.reviewMethod' | translate }}</option>
+                <option value="language">{{ 'MetadataFields.languages' | translate }}</option>
+                <option value="source">{{ 'MetadataFields.source' | translate }}</option>
+                <option value="journal">{{ 'MetadataFields.journal' | translate }}</option>
+                <option value="localTag">{{ 'MetadataFields.localTags' | translate }}</option>
+                <option value="identifier">{{ 'MetadataFields.identifiers' | translate }}</option>
+                <option value="collection">{{ 'MetadataFields.context' | translate }}</option>
+                <option value="projectInfo">{{ 'MetadataFields.projectInfo' | translate }}</option>
+              </select>
+              <!--Type -->
+              <!--
                   <select class="form-select" formControlName="type" (change)="changeType(i, t.value)"
                     #t>
                     @for (searchType of searchTypeKeys; track searchType) {
@@ -161,145 +160,151 @@
                     }
                   </select>
                   -->
-                </div>
+            </div>
 
 
-                <!-- Input -->
-                @if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.STANDARD) {
-                  <div class="col mb-auto" formGroupName="content">
-                    <input class="form-control" type="text" formControlName="text"/>
-                  </div>
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.PERSON) {
-                  <div class="col-sm-2 mb-auto" formGroupName="content">
-                    <select class="form-select" formControlName="role">
-                      <option value="">
-                        {{ 'MetadataFields.person' | translate}}
-                      </option>
-                      @for (val of personOptions; track val) {
-                        <option [value]="val">
-                          {{ 'CreatorRoles.' + val | translate }}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                  <div class="col mb-auto">
-                    <pure-person-autosuggest [formForPersonsCompleteName]="$any(currentFormGroup).content.get('text')"
-                      [formForPersonsIdValue]="$any(currentFormGroup).content.get('hidden')" [showConeAndOrcid]="true"/>
-                  </div>
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.ORGANIZATION) {
+            <!-- Input -->
+            @if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.STANDARD) {
+            <div class="col mb-auto" formGroupName="content">
+              <input class="form-control" type="text" formControlName="text" />
+            </div>
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.PERSON) {
+            <div class="col-sm-2 mb-auto" formGroupName="content">
+              <select class="form-select" formControlName="role">
+                <option value="">
+                  {{ 'MetadataFields.person' | translate}}
+                </option>
+                @for (val of personOptions; track val) {
+                <option [value]="val">
+                  {{ 'CreatorRoles.' + val | translate }}
+                </option>
+                }
+              </select>
+            </div>
+            <div class="col mb-auto">
+              <pure-person-autosuggest [formForPersonsCompleteName]="$any(currentFormGroup).content.get('text')"
+                [formForPersonsIdValue]="$any(currentFormGroup).content.get('hidden')" [showConeAndOrcid]="true" />
+            </div>
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.ORGANIZATION) {
 
-                  <div class="col mb-auto" formGroupName="content">
-                    <pure-ou-autosuggest [formForOuName]="$any(currentFormGroup).content.get('text')"
-                      [formForOuId]="$any(currentFormGroup).content.get('hidden')"/>
-                  </div>
+            <div class="col mb-auto" formGroupName="content">
+              <pure-ou-autosuggest [formForOuName]="$any(currentFormGroup).content.get('text')"
+                [formForOuId]="$any(currentFormGroup).content.get('hidden')" />
+            </div>
 
-                  <!--
+            <!--
                   <div class="col-3">
                     <input class="form-control" type="text" formControlName="hidden"/>
                   </div>
                   -->
-                  <div class="col-sm-2 form-check form-switch mb-auto" formGroupName="content">
-                    <input id="predecessorsAndSuccessors" class="form-check-input" type="checkbox"
-                      formControlName="includePredecessorsAndSuccessors"/>
-                    <label class="form-check-label" style="font-size:12px;" for="predecessorsAndSuccessors">
-                      {{'Search.includePresAndSuccs' | translate}}
-                    </label>
-                  </div>
-
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.DATE) {
-
-                  <div class="col mb-auto" formGroupName="content">
-                    <input class="form-control" type="text" formControlName="from" [placeholder]="'common.dateFormat' | translate"/>
-                    <pure-validation-error [control]="currentFormGroup.get('content.from')"/>
-                  </div>
-                  <div class="col mb-auto" formGroupName="content">
-                    <input class="form-control" type="text" formControlName="to" [placeholder]="'common.dateFormat' | translate"/>
-                    <pure-validation-error [control]="currentFormGroup.get('content.to')"/>
-                  </div>
-
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.IDENTIFIER) {
-                  <div class="col-sm-3 mb-auto" formGroupName="content">
-                    <select class="form-select" formControlName="identifierType">
-                      <option value="">
-                        -
-                      </option>
-                      @for (idType of identifierOptions; track idType) {
-                        <option [value]="idType">
-                          {{ idType }}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                  <div class="col mb-auto" formGroupName="content">
-                    <input class="form-control" type="text" formControlName="text"/>
-                  </div>
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.CLASSIFICATION) {
-                  <div class="col-sm-2 mb-auto" formGroupName="content">
-                    <select class="form-select" formControlName="classificationType" #classificationTypeSelect>
-                      @for(classificationType of (SubjectClassification | keyvalue); track classificationType) {
-                        <option [value]="classificationType.key">
-                          {{ classificationType.key }}
-                        </option>
-                      }
-
-                    </select>
-                  </div>
-                  <div class="col mb-auto" formGroupName="content">
-                    <pure-cone-autosuggest [form]="$any(currentFormGroup).content.get('text')" [coneType]="classificationTypeSelect.value" [addQuotesForSearch]="true"/>
-                  </div>
-
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.JOURNAL) {
-                  <div class="col mb-auto" formGroupName="content">
-                    <pure-cone-autosuggest coneType="journals" [form]="$any(currentFormGroup).content.get('text')" [addQuotesForSearch]="true"></pure-cone-autosuggest>
-                  </div>
-
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.CONTEXT) {
-                  <div class="col-sm-3 mb-auto" formGroupName="content">
-                    <select class="form-select" formControlName="text">
-                      @for (context of $any(currentFormGroup).contextList; track context) {
-                        <option [value]="context.objectId">
-                          {{ context.name }}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.LANGUAGE) {
-                  <div class="col mb-auto" formGroupName="content">
-                    <pure-cone-autosuggest [form]="$any(currentFormGroup).content.get('text')" coneType="iso639-3" (valueSelected)="$any(currentFormGroup).content.get('text').setValue($event?.value?.substring(0,3))"/>
-                  </div>
-
-                } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.ENUM) {
-
-                  @let enumCriterion = $any(currentFormGroup);
-                  <div class="col mb-auto" formGroupName="content">
-                    <select class="form-select" formControlName="text">
-                      @for (val of enumCriterion.getValues(); track val) {
-                        <option [value]="val">
-                          {{ enumCriterion.translatePrefix ? ((enumCriterion.translatePrefix + val) | translate) : val }}
-                        </option>
-                      }
-                    </select>
-                  </div>
-                }
-
-                <div class="col-sm-1 mb-auto">
-                  <pure-add-remove-buttons [index]="i" (notice)="$event.action==='add' ? addSearchCriterion(i, $any(currentFormGroup)) : removeSearchCriterion(i) "></pure-add-remove-buttons>
-                </div>
-
-
-              }
+            <div class="col-sm-2 form-check form-switch mb-auto" formGroupName="content">
+              <input id="predecessorsAndSuccessors" class="form-check-input" type="checkbox"
+                formControlName="includePredecessorsAndSuccessors" />
+              <label class="form-check-label" style="font-size:12px;" for="predecessorsAndSuccessors">
+                {{'Search.includePresAndSuccs' | translate}}
+              </label>
             </div>
 
-            <!-- Possible closing parenthesis-->
-            @if (possibleCriterionsForClosingParenthesisMap.includes($any(currentFormGroup))) {
-              <div class="row" style="margin-left: {{($any(currentFormGroup).level-1) * 15}}px">
-                <div class="col-sm-1 mb-auto">
-                  <button type="button" class="btn btn-sm btn-outline-secondary m-1 " (click)="addClosingParenthesis(i)">
-                    )
-                  </button>
-                </div>
-              </div>
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.DATE) {
+
+            <div class="col mb-auto" formGroupName="content">
+              <input class="form-control" type="text" formControlName="from"
+                [placeholder]="'common.dateFormat' | translate" />
+              <pure-validation-error [control]="currentFormGroup.get('content.from')" />
+            </div>
+            <div class="col mb-auto" formGroupName="content">
+              <input class="form-control" type="text" formControlName="to"
+                [placeholder]="'common.dateFormat' | translate" />
+              <pure-validation-error [control]="currentFormGroup.get('content.to')" />
+            </div>
+
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.IDENTIFIER) {
+            <div class="col-sm-3 mb-auto" formGroupName="content">
+              <select class="form-select" formControlName="identifierType">
+                <option value="">
+                  -
+                </option>
+                @for (idType of identifierOptions; track idType) {
+                <option [value]="idType">
+                  {{ idType }}
+                </option>
+                }
+              </select>
+            </div>
+            <div class="col mb-auto" formGroupName="content">
+              <input class="form-control" type="text" formControlName="text" />
+            </div>
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.CLASSIFICATION) {
+            <div class="col-sm-2 mb-auto" formGroupName="content">
+              <select class="form-select" formControlName="classificationType" #classificationTypeSelect>
+                @for(classificationType of (SubjectClassification | keyvalue); track classificationType) {
+                <option [value]="classificationType.key">
+                  {{ classificationType.key }}
+                </option>
+                }
+
+              </select>
+            </div>
+            <div class="col mb-auto" formGroupName="content">
+              <pure-cone-autosuggest [form]="$any(currentFormGroup).content.get('text')"
+                [coneType]="classificationTypeSelect.value" [addQuotesForSearch]="true" />
+            </div>
+
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.JOURNAL) {
+            <div class="col mb-auto" formGroupName="content">
+              <pure-cone-autosuggest coneType="journals" [form]="$any(currentFormGroup).content.get('text')"
+                [addQuotesForSearch]="true" (valueSelected)="$any(currentFormGroup).handleJournalSuggest($event)"></pure-cone-autosuggest>
+            </div>
+
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.CONTEXT) {
+            <div class="col-sm-3 mb-auto" formGroupName="content">
+              <select class="form-select" formControlName="text">
+                @for (context of $any(currentFormGroup).contextList; track context) {
+                <option [value]="context.objectId">
+                  {{ context.name }}
+                </option>
+                }
+              </select>
+            </div>
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.LANGUAGE) {
+            <div class="col mb-auto" formGroupName="content">
+              <pure-cone-autosuggest [form]="$any(currentFormGroup).content.get('text')" coneType="iso639-3"
+                (valueSelected)="$any(currentFormGroup).content.get('text').setValue($event?.value?.substring(0,3))" />
+            </div>
+
+            } @else if (searchTypes[$any(currentFormGroup).type]['displayType'] == DisplayType.ENUM) {
+
+            @let enumCriterion = $any(currentFormGroup);
+            <div class="col mb-auto" formGroupName="content">
+              <select class="form-select" formControlName="text">
+                @for (val of enumCriterion.getValues(); track val) {
+                <option [value]="val">
+                  {{ enumCriterion.translatePrefix ? ((enumCriterion.translatePrefix + val) | translate) : val }}
+                </option>
+                }
+              </select>
+            </div>
             }
+
+            <div class="col-sm-1 mb-auto">
+              <pure-add-remove-buttons [index]="i"
+                (notice)="$event.action==='add' ? addSearchCriterion(i, $any(currentFormGroup)) : removeSearchCriterion(i) "></pure-add-remove-buttons>
+            </div>
+
+
+            }
+          </div>
+
+          <!-- Possible closing parenthesis-->
+          @if (possibleCriterionsForClosingParenthesisMap.includes($any(currentFormGroup))) {
+          <div class="row" style="margin-left: {{($any(currentFormGroup).level-1) * 15}}px">
+            <div class="col-sm-1 mb-auto">
+              <button type="button" class="btn btn-sm btn-outline-secondary m-1 " (click)="addClosingParenthesis(i)">
+                )
+              </button>
+            </div>
+          </div>
+          }
 
           }
 
@@ -320,8 +325,7 @@
 
       <h2 class="accordion-header">
         <button class="accordion-button rounded-0" type="button" data-bs-toggle="collapse"
-          data-bs-target="#accordionBodyGenreGroup" aria-expanded="true"
-          aria-controls="accordionBodyGenreGroup">
+          data-bs-target="#accordionBodyGenreGroup" aria-expanded="true" aria-controls="accordionBodyGenreGroup">
           {{ 'MetadataFields.genre' | translate }}
         </button>
       </h2>
@@ -332,7 +336,7 @@
             <div class="col-md-6 col-xxl-4">
               <div class="form-check">
                 <input id="checkAllGenres" class="form-check-input" type="checkbox"
-                  (change)="genreListSearchCriterion.selectAll($event)"/>
+                  (change)="genreListSearchCriterion.selectAll($event)" />
                 <label class="form-check-label" for="checkAllGenres">{{ 'common.selectAll' | translate }}</label>
               </div>
             </div>
@@ -342,19 +346,20 @@
           @let sortedGenres = genreListSearchCriterion.genreOptions_ | sortByLabel : 'MdsPublicationGenre.';
 
           @for (row of genreRows; track row; let i = $index) {
-            <div class="row">
-              @for (col of genreCols; track col; let j = $index) {
-                <div class="col-md-6 col-xxl-4">
-                  @if (sortedGenres[(i + j * anzGenreRows)] != 'THESIS'){
-                    <div class="form-check">
-                      <input id="genreName{{(i + j * anzGenreRows)}}" class="form-check-input" type="checkbox"
-                        [formControl]="$any(genreListSearchCriterion.genreFormGroup).get(sortedGenres[(i + j * anzGenreRows)])"/>
-                      <label class="form-check-label" for="genreName{{(i + j * anzGenreRows)}}">{{ 'MdsPublicationGenre.' + sortedGenres[(i + j * anzGenreRows)] | translate}}</label>
-                    </div>
-                  }
-                </div>
+          <div class="row">
+            @for (col of genreCols; track col; let j = $index) {
+            <div class="col-md-6 col-xxl-4">
+              @if (sortedGenres[(i + j * anzGenreRows)] != 'THESIS'){
+              <div class="form-check">
+                <input id="genreName{{(i + j * anzGenreRows)}}" class="form-check-input" type="checkbox"
+                  [formControl]="$any(genreListSearchCriterion.genreFormGroup).get(sortedGenres[(i + j * anzGenreRows)])" />
+                <label class="form-check-label" for="genreName{{(i + j * anzGenreRows)}}">{{ 'MdsPublicationGenre.' +
+                  sortedGenres[(i + j * anzGenreRows)] | translate}}</label>
+              </div>
               }
             </div>
+            }
+          </div>
           }
 
           <!--THESIS genre-->
@@ -362,21 +367,22 @@
             <div class="col-md-6 col-xxl-4">
               <div class="form-check">
                 <input id="genreDegreeName" class="form-check-input" type="checkbox"
-                  [formControl]="$any(genreListSearchCriterion.genreFormGroup).get('THESIS')"/>
-                <label class="form-check-label" for="genreDegreeName">{{ 'MdsPublicationGenre.THESIS' | translate }}</label>
+                  [formControl]="$any(genreListSearchCriterion.genreFormGroup).get('THESIS')" />
+                <label class="form-check-label" for="genreDegreeName">{{ 'MdsPublicationGenre.THESIS' | translate
+                  }}</label>
               </div>
             </div>
           </div>
           <!--Degrees -->
           <div class="row">
             @for (currentDegree of genreListSearchCriterion.degreeOptions; track currentDegree; let i = $index; ) {
-              <div class="col-md-4 col-xxl-2">
-                <div class="form-check">
-                  <input id="degreeName{{i}}" class="form-check-input" type="checkbox"
-                    [formControl]="$any(genreListSearchCriterion.degreeFormGroup).get(currentDegree)"/>
-                  <label class="form-check-label" for="degreeName{{i}}">{{ 'Thesis.' + currentDegree | translate}}</label>
-                </div>
+            <div class="col-md-4 col-xxl-2">
+              <div class="form-check">
+                <input id="degreeName{{i}}" class="form-check-input" type="checkbox"
+                  [formControl]="$any(genreListSearchCriterion.degreeFormGroup).get(currentDegree)" />
+                <label class="form-check-label" for="degreeName{{i}}">{{ 'Thesis.' + currentDegree | translate}}</label>
               </div>
+            </div>
             }
           </div>
         </div>
@@ -399,13 +405,14 @@
 
           <div class="row mb-3">
             @for (pubState of publicationStateSearchCriterion.pubStateOptions; track pubState; let i = $index; ) {
-              <div class="col-md-6 col-xxl-4">
-                <div class="form-check">
-                  <input id="pubStateName{{i}}" class="form-check-input" type="checkbox"
-                    [formControl]="$any(publicationStateSearchCriterion.publicationStatesFormGroup).get(pubState)"/>
-                  <label class="form-check-label" for="pubStateName{{i}}">{{ 'PublicationState.' + pubState | translate }}</label>
-                </div>
+            <div class="col-md-6 col-xxl-4">
+              <div class="form-check">
+                <input id="pubStateName{{i}}" class="form-check-input" type="checkbox"
+                  [formControl]="$any(publicationStateSearchCriterion.publicationStatesFormGroup).get(pubState)" />
+                <label class="form-check-label" for="pubStateName{{i}}">{{ 'PublicationState.' + pubState | translate
+                  }}</label>
               </div>
+            </div>
             }
           </div>
         </div>
@@ -419,8 +426,10 @@
     <pure-file-section-component [fileSectionSearchCriterion]="locatorSectionSearchCriterion" />
 
 
-    <ng-template [ngTemplateOutlet]="searchButtons"/>
+    <ng-template [ngTemplateOutlet]="searchButtons" />
 
+    <!--DEBUG INFO FOR ADMINS -->
+    @if (aaService.principal.getValue().isAdmin) {
     <button type="button" class="btn btn-sm btn-outline-info"
       [disabled]="searchForm.invalid || flexibleFields.controls.length === 0" (click)="show_form()">
       show form
@@ -429,22 +438,25 @@
       [disabled]="searchForm.invalid || flexibleFields.controls.length === 0" (click)="show_query()">
       show query
     </button>
+    }
 
   </form>
 
+  <!--DEBUG INFO FOR ADMINS -->
+  @if (aaService.principal.getValue().isAdmin) {
   @if (result) {
-    <pre>{{ result | json }}</pre>
+  <pre>{{ result | json }}</pre>
   }
   @if (query) {
-    <pre>{{ query | json }}</pre>
+  <pre>{{ query | json }}</pre>
+  }
   }
 </div>
 
 <ng-template #searchButtons>
 
   <div class="m-2">
-    <button type="submit" class="btn btn btn-primary me-2"
-      [disabled]="!isValid" (click)="search()">
+    <button type="submit" class="btn btn btn-primary me-2" [disabled]="!isValid" (click)="search()">
       {{ 'Search.startSearch' | translate }}
     </button>
     <button type="button" class="btn btn btn-outline-primary me-2" (click)="reset()">
@@ -452,13 +464,15 @@
     </button>
 
     @if(aaService.isLoggedIn) {
-      <button type="button" class="btn btn btn-outline-primary me-2" (click)="openSavedSearchModal()">{{ 'SavedSearches.title' | translate }}</button>
-
-
+    <button type="button" class="btn btn btn-outline-primary me-2" (click)="openSavedSearchModal()">{{
+      'SavedSearches.title' | translate }}</button>
+      <!--
+      <button type="button" class="btn btn-sm btn-primary-outline me-2" pureCopyButton [textToCopyCallback]="getSearchFormJsonLinkCallback"></button>
+      -->
     }
+
 
   </div>
 
 
 </ng-template>
-

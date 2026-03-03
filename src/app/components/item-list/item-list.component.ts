@@ -2,7 +2,7 @@ import { AsyncPipe, CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, ContentChild, ContentChildren, Input, QueryList, ViewChildren } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ItemListElementComponent } from './item-list-element/item-list-element.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, NavigationSkipped, NavigationStart, Router} from '@angular/router';
 import { TopnavComponent } from 'src/app/components/shared/topnav/topnav.component';
 import { BehaviorSubject, catchError, map, Observable, of, Subscription, tap } from 'rxjs';
 import { ItemVersionVO } from 'src/app/model/inge';
@@ -23,6 +23,7 @@ import { FeedModalComponent } from "../shared/feed-modal/feed-modal.component";
 import { ItemFilterComponent } from "./filters/item-filter/item-filter.component";
 import { ItemAggregationFilterComponent } from "./aggregations/aggregation-filter/item-aggregation-filter.component";
 import { SortSelectorComponent } from "./filters/sort-selector/sort-selector.component";
+import {filter} from "rxjs/operators";
 
 
 
@@ -77,7 +78,15 @@ export class ItemListComponent implements AfterViewInit{
   queryParamSubscription!: Subscription;
   itemUpdatedSubscription!: Subscription;
   selectionServiceSubscription!: Subscription;
+  routerEventsSubscription!: Subscription;
 
+  /** URl of the current list. */
+  listUrl:string;
+
+  /** Set to true if the refresh via the router event subscription should be skipped.
+   * Always skip first refresh, as it is handled by searchQuerySubscription */
+
+  skipNextRefreshViaRouting= true;
 
   constructor(
     private service: ItemsService,
@@ -91,22 +100,7 @@ export class ItemListComponent implements AfterViewInit{
   )
   {
 
-    this.itemUpdatedSubscription = this.listStateService.itemUpdated.subscribe(itemId => {
-      if(itemId) {
-        this.updateList();
-      }
-    })
-
-    this.queryParamSubscription =
-      this.activatedRoute.queryParamMap.subscribe((paramMap) => {
-        /*
-        this.size = parseInt(paramMap.get('size') || '25');
-        this.currentPage = parseInt(paramMap.get('page') || '1');
-        console.log("Query params changed: " + paramMap );
-
-         */
-    })
-
+    this.listUrl = this.router.url.split('?')[0];
     this.selectionServiceSubscription = this.selectionService.selectedIds$.subscribe(ids => {
       if(ids.length > 0) {
         this.select_all.setValue(true);
@@ -116,6 +110,22 @@ export class ItemListComponent implements AfterViewInit{
       }
     })
 
+    //Updates this list when clicking the list link in the menu or breadcrumb, although the component is stored via PureRrs and it is a same URL navigation
+    //skips the update if it was already initialized by the searchQuery subscription to prevent double updates
+    this.routerEventsSubscription = this.router.events.pipe(
+      //tap(ev => console.log(ev)),
+      filter(event => event instanceof NavigationSkipped || event instanceof NavigationEnd),
+      filter(event => event.url.split('?')[0] === this.listUrl)
+    ).subscribe((event: any) => {
+      //console.log(this.skipNextRefreshViaRouting)
+      if(!this.skipNextRefreshViaRouting) {
+        //console.log("REFRESH LIST!!!", this.listUrl);
+        this.updateList();
+      }
+      this.skipNextRefreshViaRouting = false;
+
+    });
+
   }
 
 
@@ -124,18 +134,21 @@ export class ItemListComponent implements AfterViewInit{
     this.queryParamSubscription.unsubscribe()
     this.itemUpdatedSubscription.unsubscribe();
     this.selectionServiceSubscription.unsubscribe();
+    this.routerEventsSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
-    //this.currentPaginatorEvent = this.paginator.fromToValues();
     this.searchQuerySubscription = this.searchQuery.subscribe(q => {
       if (q) {
-        //subsequent call if query is already set,don't reset values
+        //subsequent call with a new search query. If query is already set, reset values
         if(this.currentQuery) {
           this.reset();
+          this.skipNextRefreshViaRouting=true;
         }
         this.currentQuery = q;
+        //console.log("New Query - REFRESH");
         this.updateList();
+
       }
     })
 
@@ -210,7 +223,7 @@ export class ItemListComponent implements AfterViewInit{
       ...runtimeMappings && {runtime_mappings: runtimeMappings},
       ...aggQueries && {aggs: aggQueries}
     }
-    console.log(JSON.stringify(completeQuery))
+    console.log("List query", completeQuery)
 
     this.currentCompleteQuery = completeQuery;
     this.search(completeQuery);

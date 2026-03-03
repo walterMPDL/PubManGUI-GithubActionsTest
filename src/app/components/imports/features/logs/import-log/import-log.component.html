@@ -81,7 +81,12 @@
 
   <td class="d-flex d-none col-0 col-xxl-1 d-xxl-table-cell">
       <span class="material-symbols-outlined my-0 ms-4"
-        ngbTooltip="{{ 'imports.list.remove' | translate }}" placement="bottom-left" style="cursor: pointer" (click)="deleteImportLog(log)">
+        [ngClass]="{'text-secondary' : !isFinished(log.status)}"
+        [ngStyle]="{
+          'pointer-events': !isFinished(log.status) ? 'none' : 'auto', 
+          'cursor': !isFinished(log.status) ? 'not-allowed' : 'pointer'
+        }"
+        ngbTooltip="{{ 'imports.list.remove' | translate }}" placement="bottom-left" (click)="deleteImportLog(log)">
         delete
       </span>
   </td>
