@@ -302,7 +302,7 @@
     "basket": "Ablage",
     "cancel": "Abbrechen",
     "changeContext": "Kontext ändern",
-    "choose.file": "Datei auswählen",
+    "choose.file": "Durchsuchen...",
     "choose.files": "Dateien auswählen",
     "choose.noFileChosen": "Keine Datei ausgewählt",
     "clearAll": "Liste leeren",
@@ -421,7 +421,7 @@
     "STAATSEXAMEN": "Staatsexamen"
   },
   "Edit": {
-    "addMultipleCreators": "Mehrere Urheber hinzufügen (Copy-Paste)",
+    "addMultipleCreators": "Mehrere Urheber hinzufügen (Kopieren & Einfügen)",
     "doiConformationMessage": "Mit dem nächsten Schritt ermächtigen Sie die Max Planck Digital Library, einen DataCite DOI (Digital Object Identifier) für diese in MPG.PuRe verzeichnete Publikation zu registrieren.<br/><br/>Die DOI-Registrierung kann nicht rückgängig gemacht werden. Deshalb bitten wir Sie, diese Funktion mit Bedacht und nur dann zu verwenden, wenn Sie sich der daraus entstehenden Konsequenzen bewusst sind.<br/><br/>Im Besonderen bestätigen Sie mit dieser DOI-Registrierung die wissenschaftliche Qualität des Inhalts, sowie die Tatsache, dass dieser Publikation bisher weder von Seiten der MPG, noch von einer anderen Stelle ein DOI zugewiesen worden ist. Nähere Informationen zu diesen Anforderungen finden Sie <a href=\"https://doi.mpdl.mpg.de/faq/#req\" target=\"_blank\">hier</a>.<br/><br/>Darüber hinaus stimmen Sie zu, dass die URL des MPG.PuRe-Datensatzes sowie die bibliografischen Metadaten zum Zwecke der DOI-Registrierung an die Technische Informationsbibliothek (TIB) Hannover übermittelt werden dürfen.",
     "genreAlphabetically": "Alphabetisch",
     "genreTop5": "Top 5",
