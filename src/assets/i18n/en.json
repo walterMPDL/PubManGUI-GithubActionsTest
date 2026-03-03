@@ -8,6 +8,7 @@
     "SUBTITLE": "Subtitle"
   },
   "backendErrors": {
+    "BATCH_USER_LOCKED": "A batch process was already started by you. Please wait until it is finished.",
     "CONTEXT_CLOSED": "The context is closed",
     "CONTEXT_NOT_FOUND": "The context was not found",
     "DOI_ITEM_NOT_VALID": "The dataset is not valid for a DOI",
@@ -25,8 +26,7 @@
     "TOKEN_INVALID": "The token is invalid",
     "TRANSFORMATION_ERROR": "Error while transforming to the selected format",
     "USER_NOT_FOUND": "The user was not found",
-    "VALIDATION_ERROR": "Validation error",
-    "BATCH_USER_LOCKED": "A batch process was already started by you. Please wait until it is finished."
+    "VALIDATION_ERROR": "Validation error"
   },
   "backendValidation": {
     "AlternativeTitleNotProvided": "Alternativtitel ist nicht angegeben (keine entsprechende deutsche Übersetzung gefunden)",
@@ -142,7 +142,7 @@
     "actions.item.state.withdraw.info": "The datasets will be discarded if their current state allows it.",
     "actions.localTags": "Local tags",
     "actions.localTags.add": "Add",
-    "actions.localTags.add.info": "The following tags will be added to all dataset.",
+    "actions.localTags.add.info": "The following tags will be added to all datasets.",
     "actions.localTags.replace": "Replace",
     "actions.localTags.replace.from": "Tag to replace",
     "actions.localTags.replace.info": "Certain tags will be replaced within the datasets.",
@@ -523,9 +523,9 @@
     "WOS_STRING": "WoS"
   },
   "ImportFormatConfiguration": {
+    "Files_to_Import": "Files to import",
     "Flavor": "Import scheme",
-    "import-name": "Import scheme",
-    "Files_to_Import": "Files to import"
+    "import-name": "Import scheme"
   },
   "ImportMessage": {
     "AlternativeTitleNotProvided": "An alternative title is missing.",
@@ -900,7 +900,12 @@
     "PEER": "Peer"
   },
   "SavedSearches": {
+    "actions": "Actions",
+    "copyLinkHeader": "Copy link",
     "delete": "Delete",
+    "mask": "Search mask",
+    "name": "Name",
+    "result": "Serach results",
     "saveCurrent": "Save current search mask",
     "savedMasks": "My search masks",
     "title": "Saved Searches",
