@@ -17,6 +17,7 @@ export class CopyButtonDirective {
 
   @Input() textToCopy?: string;
   @Input() textToCopyCallback?: Function;
+  @Input() tooltip?: string;
   copiedSuccessful: boolean = false;
 
   private copyIcon;
@@ -28,6 +29,12 @@ export class CopyButtonDirective {
 
     ngbTooltip.ngbTooltip = translateService.instant('common.copyToClipboard');
 
+  }
+
+  ngOnInit() {
+    if(this.tooltip) {
+      this.ngbTooltip.ngbTooltip = this.tooltip;
+    }
   }
 
   onCopy() {

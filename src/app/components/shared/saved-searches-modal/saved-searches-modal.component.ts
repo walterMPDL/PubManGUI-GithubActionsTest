@@ -11,6 +11,7 @@ import { DatePipe } from "@angular/common";
 import { LoadingComponent } from "../loading/loading.component";
 import { CopyButtonDirective } from "../../../directives/copy-button.directive";
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'pure-saved-searches-modal',
@@ -74,9 +75,18 @@ export class SavedSearchesModalComponent {
 
   }
 
-  getSavedSearchLink(savedSearchId: string) {
+  getSavedSearchLinkMask(savedSearchId: string) {
     //const urlString = window.location.toString();
     const url = new URL(window.location.pathname, window.location.origin);
+    url.searchParams.set('searchId', savedSearchId);
+    //this.clipboard.copy(url.toString());
+    return url.toString();
+    //console.log(`${url}`);
+  }
+
+  getSavedSearchLinkResults(savedSearchId: string) {
+    //const urlString = window.location.toString();
+    const url = new URL('/search', window.location.origin);
     url.searchParams.set('searchId', savedSearchId);
     //this.clipboard.copy(url.toString());
     return url.toString();

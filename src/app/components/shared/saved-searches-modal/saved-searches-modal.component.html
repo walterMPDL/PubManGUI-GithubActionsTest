@@ -34,6 +34,42 @@
 <div>
   <h5>{{ 'SavedSearches.savedMasks' | translate }}</h5>
   @if(!savedSearchesLoading) {
+    <div class="row">
+    <table class="table table-hover">
+
+      <thead>
+      <tr>
+        <th scope="col">{{ 'SavedSearches.name' | translate }}</th>
+        <th scope="col">{{ 'MetadataFields.dateModified' | translate }}</th>
+        <th scope="col">{{ 'SavedSearches.copyLinkHeader' | translate }}</th>
+        <th scope="col">{{ 'SavedSearches.actions' | translate }}</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (savedSearch of savedSearches; track savedSearch; let i = $index;) {
+          <tr>
+            <td scope="row" class="text-break">
+              <button class="btn btn-link text-start" (click)="applySearchFromHistory(i)">{{ savedSearch.name + ' '}}</button>
+            </td>
+            <td class="">
+              {{savedSearch.creationDate | date:'yyyy-MM-dd HH:mm:ss'}}
+            </td>
+            <td class="">
+              <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkMask(savedSearch.objectId!)"> {{'SavedSearches.mask' | translate}}</button>
+              <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkResults(savedSearch.objectId!)"> {{'SavedSearches.result' | translate}}</button>
+
+            <td class="">
+              <button class="btn btn-sm btn-warning me-2" (click)="updateSavedSearch(i)" [ngbTooltip]="'SavedSearches.update' | translate"><span class="material-symbols-outlined">change_circle</span></button>
+              <button class="btn btn-sm btn-danger" (click)="deleteSavedSearch(i)" [ngbTooltip]="'SavedSearches.delete' | translate"><i class="bi bi-trash"></i></button>
+
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    </div>
+    <!--
   @for (savedSearch of savedSearches; track savedSearch; let i = $index;) {
     <div class="row mb-2">
       <div class="col-6 text-break">
@@ -43,13 +79,16 @@
         {{savedSearch.creationDate | date:'yyyy-MM-dd HH:mm:ss'}}
       </div>
       <div class="col-3">
-        <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLink(savedSearch.objectId!)"></button>
+        <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkMask(savedSearch.objectId!)"></button>
+        <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkResults(savedSearch.objectId!)"></button>
         <button class="btn btn-sm btn-warning me-2" (click)="updateSavedSearch(i)" [ngbTooltip]="'SavedSearches.update' | translate"><span class="material-symbols-outlined">change_circle</span></button>
         <button class="btn btn-sm btn-danger" (click)="deleteSavedSearch(i)" [ngbTooltip]="'SavedSearches.delete' | translate"><i class="bi bi-trash"></i></button>
       </div>
     </div>
 
+
   }
+  -->
   } @else {
     <pure-loading></pure-loading>
   }
