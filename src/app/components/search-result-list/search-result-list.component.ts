@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ItemListComponent } from "../item-list/item-list.component";
-import { Observable } from "rxjs";
+import {Observable, of} from "rxjs";
 import { AaService } from "../../services/aa.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
@@ -22,6 +22,8 @@ import {
   ItemSourceTitleAggregationDirective
 } from "../item-list/aggregations/aggregation-filter/directives/item-sourcetitle-aggregation.directive";
 import { TranslatePipe } from "@ngx-translate/core";
+import {SavedSearchService} from "../../services/pubman-rest-client/saved-search.service";
+import {ItemSearchAdvancedService} from "../item-search-advanced/item-search-advanced.service";
 
 @Component({
   selector: 'pure-search-result-list',
@@ -42,32 +44,15 @@ import { TranslatePipe } from "@ngx-translate/core";
 export class SearchResultListComponent {
 
    //@ViewChild('child') child: ItemListComponent;
-  searchQuery: Observable<any>;
+  searchQuery!: Observable<any>;
 
-  constructor(private aaService: AaService, private router: Router, private location: Location, private route:ActivatedRoute, protected searchStateService: SearchStateService) {
-    //Update search query whenever the router sends a new one. As the state in the router is  available in getCurrentNavigation only once during the first constructor call, it has
-    //to be drawn from window.history
-    this.searchQuery = searchStateService.$currentQuery.asObservable();
-    /*
-    const query = sessionStorage.getItem("currentQuery");
-    if(query)
-      this.searchQuery = of(JSON.parse(query));
-    else
-      this.searchQuery = of();
-
-    const q = this.router.getCurrentNavigation()?.extras?.state?.['query'];
-    console.log('Router query: ' + q)
-    this.searchQuery = this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      // required to work immediately.
-      startWith(this.router),
-      map(r => {
-        return history.state.query;
-      })
-    )
-
-     */
+  constructor(private route:ActivatedRoute, protected searchStateService: SearchStateService, private savedSearchService: SavedSearchService, private advancedSearchService: ItemSearchAdvancedService) {
+    this.searchQuery = this.searchStateService.$currentQuery;
+    const searchId = this.route.snapshot.queryParamMap.get("searchId");
+    const searchForm = this.route.snapshot.queryParamMap.get("searchForm");
+    this.searchStateService.initSearchQuery(searchId, searchForm);
   }
+
 
 
 }

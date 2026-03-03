@@ -100,8 +100,7 @@ export class ItemListComponent implements AfterViewInit{
   )
   {
 
-    this.listUrl = this.router.url;
-
+    this.listUrl = this.router.url.split('?')[0];
     this.selectionServiceSubscription = this.selectionService.selectedIds$.subscribe(ids => {
       if(ids.length > 0) {
         this.select_all.setValue(true);
@@ -114,10 +113,11 @@ export class ItemListComponent implements AfterViewInit{
     //Updates this list when clicking the list link in the menu or breadcrumb, although the component is stored via PureRrs and it is a same URL navigation
     //skips the update if it was already initialized by the searchQuery subscription to prevent double updates
     this.routerEventsSubscription = this.router.events.pipe(
+      //tap(ev => console.log(ev)),
       filter(event => event instanceof NavigationSkipped || event instanceof NavigationEnd),
-      filter(event => event.url === this.listUrl)
+      filter(event => event.url.split('?')[0] === this.listUrl)
     ).subscribe((event: any) => {
-
+      //console.log(this.skipNextRefreshViaRouting)
       if(!this.skipNextRefreshViaRouting) {
         //console.log("REFRESH LIST!!!", this.listUrl);
         this.updateList();

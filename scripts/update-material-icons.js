@@ -10,6 +10,7 @@ const icons = [
   "arrow_drop_up",
   "breaking_news_alt_1",
   "cancel",
+  "change_circle",
   "check_circle",
   "close",
   "collapse_content",

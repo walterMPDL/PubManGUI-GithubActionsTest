@@ -466,9 +466,11 @@
     @if(aaService.isLoggedIn) {
     <button type="button" class="btn btn btn-outline-primary me-2" (click)="openSavedSearchModal()">{{
       'SavedSearches.title' | translate }}</button>
-
-
+      <!--
+      <button type="button" class="btn btn-sm btn-primary-outline me-2" pureCopyButton [textToCopyCallback]="getSearchFormJsonLinkCallback"></button>
+      -->
     }
+
 
   </div>
 

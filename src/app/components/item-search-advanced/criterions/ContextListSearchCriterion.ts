@@ -12,7 +12,7 @@ export class ContextListSearchCriterion extends SearchCriterion {
   contextOptions: {[key:string]: ContextDbVO} = {};
 
 
-  constructor(opts?:any) {
+  constructor(checkAll: boolean, opts?:any) {
     super("contextList", opts);
 
     this.content.addControl("contexts", new FormGroup({}));
@@ -31,7 +31,7 @@ export class ContextListSearchCriterion extends SearchCriterion {
           this.contextOptions[c.objectId!] = c;
         })
 
-      Object.keys(this.contextOptions).forEach(itemState => this.contextListFormGroup.addControl(itemState, new FormControl(true)));
+      Object.keys(this.contextOptions).forEach(itemState => this.contextListFormGroup.addControl(itemState, new FormControl(checkAll)));
     })
 
 

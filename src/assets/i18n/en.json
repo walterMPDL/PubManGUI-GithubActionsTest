@@ -903,7 +903,8 @@
     "delete": "Delete",
     "saveCurrent": "Save current search mask",
     "savedMasks": "My search masks",
-    "title": "Saved Searches"
+    "title": "Saved Searches",
+    "update": "Overwrite with current search mask"
   },
   "Search": {
     "adminMode": "Admin",

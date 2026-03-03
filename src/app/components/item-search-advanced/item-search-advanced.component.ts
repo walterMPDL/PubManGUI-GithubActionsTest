@@ -36,6 +36,9 @@ import { BootstrapValidationDirective } from "../../directives/bootstrap-validat
 import { ValidationErrorComponent } from "../shared/validation-error/validation-error.component";
 import { MatomoTracker } from "ngx-matomo-client";
 import {filter} from "rxjs/operators";
+import {ItemSearchAdvancedService} from "./item-search-advanced.service";
+import {CopyButtonDirective} from "../../directives/copy-button.directive";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'pure-item-search-advanced',
@@ -54,8 +57,9 @@ import {filter} from "rxjs/operators";
     AddRemoveButtonsComponent,
     ConeAutosuggestComponent,
     BootstrapValidationDirective,
-    ValidationErrorComponent
-],
+    ValidationErrorComponent,
+    CopyButtonDirective
+  ],
   templateUrl: './item-search-advanced.component.html',
   styleUrl: './item-search-advanced.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -87,8 +91,6 @@ export class ItemSearchAdvancedComponent {
   genreRows: number[] = [];
   genreCols: number[] = [];
 
-  private servicesForCriterions: any;
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -102,14 +104,9 @@ export class ItemSearchAdvancedComponent {
     private contextsService: ContextsService,
     private ouService: OrganizationsService,
     private matomoTracker: MatomoTracker,
+    private advancedSearchService: ItemSearchAdvancedService,
+    private msgService: MessageService,
 ) {
-    this.servicesForCriterions = {
-      contextsService: this.contextsService,
-      ouService: this.ouService,
-      aaService: this.aaService,
-    }
-    this.initCriterions();
-    this.initializeGenres();
 
     this.logoutSubscription = aaService.logout$.pipe(
       filter(val => val===true),
@@ -119,11 +116,15 @@ export class ItemSearchAdvancedComponent {
 
   ngOnInit() {
     this.reset();
-    const searchId = this.route.snapshot.queryParamMap.get("searchId");
-    if (searchId) {
-      this.savedSearchService.retrieve(searchId).subscribe(savedSearch => {
+    const searchIdParam = this.route.snapshot.queryParamMap.get("searchId");
+    const searchFormParam = this.route.snapshot.queryParamMap.get("searchForm");
+    if (searchIdParam) {
+      this.savedSearchService.retrieve(searchIdParam).subscribe(savedSearch => {
         this.parseFormJson(savedSearch.searchForm);
       })
+    }
+    else if (searchFormParam) {
+      this.parseFormJson(JSON.parse(searchFormParam));
     }
 
   }
@@ -133,15 +134,29 @@ export class ItemSearchAdvancedComponent {
     this.logoutSubscription?.unsubscribe();
   }
 
-  initCriterions() {
-    this.contextListSearchCriterion = new ContextListSearchCriterion(this.servicesForCriterions);
-    this.itemStateListSearchCriterion = new ItemStateListSearchCriterion(this.servicesForCriterions);
-    this.genreListSearchCriterion = new GenreListSearchCriterion(this.servicesForCriterions);
-    this.publicationStateSearchCriterion = new PublicationStateSearchCriterion(this.servicesForCriterions);
-    this.fileSectionSearchCriterion = new FileSectionSearchCriterion(COMPONENT_SEARCH_TYPES.FILES, this.servicesForCriterions);
-    this.locatorSectionSearchCriterion = new FileSectionSearchCriterion(COMPONENT_SEARCH_TYPES.LOCATORS, this.servicesForCriterions);
+  reset(fromJson:any = undefined) {
+    if(fromJson) {
+      this.searchForm = this.advancedSearchService.initSearchFormFromJson(fromJson);
+    }
+    else {
+      this.searchForm = this.advancedSearchService.initSearchForm(true);
+    }
 
+    this.initCriterions();
+    this.initializeGenres();
+    this.currentlyOpenedParenthesis = undefined;
+    this.possibleCriterionsForClosingParenthesisMap = [];
   }
+
+  initCriterions() {
+    this.contextListSearchCriterion = this.searchForm.get("contexts") as ContextListSearchCriterion;
+    this.itemStateListSearchCriterion = this.searchForm.get("itemStates") as ItemStateListSearchCriterion;
+    this.genreListSearchCriterion = this.searchForm.get("genres") as GenreListSearchCriterion;
+    this.publicationStateSearchCriterion = this.searchForm.get("publicationState") as PublicationStateSearchCriterion;
+    this.fileSectionSearchCriterion = this.searchForm.get("files") as FileSectionSearchCriterion;
+    this.locatorSectionSearchCriterion = this.searchForm.get("locators") as FileSectionSearchCriterion;
+  }
+
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -162,37 +177,14 @@ export class ItemSearchAdvancedComponent {
     this.genreCols = Array(this.anzGenreCols).fill(null).map((x, i) => i);
   }
 
-  reset() {
-    this.initCriterions();
 
-    this.searchForm = this.fb.group({
-
-      flexibleFields: this.fb.array([]),
-      contexts: this.contextListSearchCriterion,
-      itemStates: this.itemStateListSearchCriterion,
-      genres: this.genreListSearchCriterion,
-      publicationState: this.publicationStateSearchCriterion,
-      files: this.fileSectionSearchCriterion,
-      locators: this.locatorSectionSearchCriterion
-    });
-
-    this.flexibleFields.push(new TitleSearchCriterion(this.servicesForCriterions));
-    this.flexibleFields.push(new LogicalOperator("and"));
-    this.flexibleFields.push(new PersonSearchCriterion(this.servicesForCriterions));
-    this.flexibleFields.push(new LogicalOperator("and"));
-    this.flexibleFields.push(new OrganizationSearchCriterion(this.servicesForCriterions));
-    this.flexibleFields.push(new LogicalOperator("and"));
-    this.flexibleFields.push(new DateSearchCriterion(DATE_SEARCH_TYPES.ANYDATE, this.servicesForCriterions));
-
-    this.currentlyOpenedParenthesis = undefined;
-    this.possibleCriterionsForClosingParenthesisMap = [];
-  }
 
   parseFormJson(formJson: any) {
     //Reset all
-    this.reset();
-    this.switchToAdmin(false);
+    //this.switchToAdmin(false);
+    this.reset(formJson);
 
+/*
     for (let [key, value] of Object.entries(formJson)) {
 
       if (key === "flexibleFields") {
@@ -200,7 +192,7 @@ export class ItemSearchAdvancedComponent {
         this.flexibleFields.clear();
         //Recreate flexible search criterions and patch form values
         for (let currentField of (value as any[])) {
-          const newSearchCriterion: SearchCriterion = new searchTypes[currentField.type].handlerClass(currentField.type, this.servicesForCriterions);
+          const newSearchCriterion: SearchCriterion = new searchTypes[currentField.type].handlerClass(currentField.type, this.advancedSearchService.servicesForCriterions);
           newSearchCriterion.patchValue(currentField);
           this.flexibleFields.push(newSearchCriterion);
         }
@@ -209,13 +201,15 @@ export class ItemSearchAdvancedComponent {
         this.searchForm.patchValue({[key]: value});
       }
     }
+
+ */
   }
 
 
   changeType(index: number, newType: string) {
     //console.log("Change criterion at index " + index + " to type " + newType);
 
-    const newSearchCriterion: SearchCriterion = new searchTypes[newType].handlerClass(newType, this.servicesForCriterions);
+    const newSearchCriterion: SearchCriterion = new searchTypes[newType].handlerClass(newType, this.advancedSearchService.servicesForCriterions);
     this.flexibleFields.removeAt(index);
     this.flexibleFields.insert(index, newSearchCriterion);
   }
@@ -249,7 +243,7 @@ export class ItemSearchAdvancedComponent {
     if (DisplayType.PARENTHESIS === this.searchTypes[searchCriterion.type].displayType) {
       newSearchCriterion = new TitleSearchCriterion();
     } else {
-      newSearchCriterion = new searchTypes[searchCriterion.type].handlerClass(searchCriterion.type, this.servicesForCriterions);
+      newSearchCriterion = new searchTypes[searchCriterion.type].handlerClass(searchCriterion.type, this.advancedSearchService.servicesForCriterions);
     }
 
     newSearchCriterion.level = searchCriterion.level;
@@ -271,7 +265,7 @@ export class ItemSearchAdvancedComponent {
   removeSearchCriterion(index: number) {
 
     const sc = this.flexibleFields.at(index) as SearchCriterion;
-    this.removeSearchCriterionWithOperator(this.flexibleFields.controls as SearchCriterion[], sc);
+    this.advancedSearchService.removeSearchCriterionWithOperator(this.flexibleFields.controls as SearchCriterion[], sc);
     this.updateListForClosingParenthesis(this.currentlyOpenedParenthesis);
 
   }
@@ -354,336 +348,9 @@ export class ItemSearchAdvancedComponent {
   }
 
 
-  private removeSearchCriterionWithOperator(criterionList: SearchCriterion[], criterion: SearchCriterion) {
-
-    const position = criterionList.indexOf(criterion);
-    // try to delete
-    let deleteBefore = true;
-    if (position == 0) {
-      deleteBefore = false;
-    } else if (position - 1 >= 0) {
-      let scBefore = criterionList[position - 1];
-
-
-      deleteBefore = scBefore.type !== (PARENTHESIS_TYPE.OPENING_PARENTHESIS);
-
-      if (!deleteBefore && position + 1 < criterionList.length) {
-        let scAfter = criterionList[position + 1];
-        deleteBefore = scAfter.type === (PARENTHESIS_TYPE.CLOSING_PARENTHESIS);
-      }
-    }
-
-
-    if (deleteBefore) {
-      for (let i = position; i >= 0; i--) {
-        const sci = criterionList[i];
-        if (searchTypes[sci.type] && DisplayType.OPERATOR === (searchTypes[sci.type].displayType)) {
-          criterionList.splice(position, 1);
-          criterionList.splice(i, 1);
-          break;
-
-        }
-      }
-    } else {
-      // delete logical operator after
-      for (let i = position; i < criterionList.length; i++) {
-        const sci = criterionList[i];
-        if (searchTypes[sci.type] && DisplayType.OPERATOR === (searchTypes[sci.type].displayType)) {
-          criterionList.splice(i, 1);
-          criterionList.splice(position, 1);
-          break;
-
-        }
-      }
-    }
-
-    // if none was found, just remove the criteria itself
-    if (criterionList.includes(criterion))
-      criterionList.splice(criterionList.indexOf(criterion), 1);
-
-
-    let parenthesisToRemove: SearchCriterion[] = [];
-    // now remove empty parenthesis
-    for (let i = 0; i < criterionList.length; i++) {
-      let sc = criterionList[i];
-      if (PARENTHESIS_TYPE.OPENING_PARENTHESIS === (sc.type)) {
-        if (i + 1 < criterionList.length) {
-          let next = criterionList[i + 1];
-          if (PARENTHESIS_TYPE.CLOSING_PARENTHESIS === (next.type)) {
-            parenthesisToRemove.push(sc);
-            parenthesisToRemove.push(next);
-          }
-        }
-
-      }
-    }
-
-    parenthesisToRemove.forEach(parenthesis => {
-      if (criterionList.includes(parenthesis)) criterionList.splice(criterionList.indexOf(parenthesis), 1);
-    });
-
-    // if first criterion is an operand, remove it
-    if (criterionList != null && criterionList.length > 0 &&
-      searchTypes[criterionList[0].type] && DisplayType.OPERATOR == (searchTypes[criterionList[0].type].displayType)) {
-      criterionList.splice(0, 1);
-    }
-
-
-  }
-
-
-  private removeEmptyFields(criterionList: SearchCriterion[]): SearchCriterion[] {
-    if (!criterionList) {
-      return [];
-
-
-    } else {
-
-
-      let copyForRemoval = [...criterionList];
-      let copyForIteration = [...criterionList];
-      // Collections.copy(copy, criterionList);
-
-      for (let sc of copyForIteration) {
-        if (sc.isEmpty()) {
-          this.removeSearchCriterionWithOperator(copyForRemoval, sc);
-          //console.log("Removing " + sc.type);
-        }
-      }
-
-      // if first in list is an operator except "NOT", remove it
-      if (copyForRemoval.length > 0 && (copyForRemoval[0].type === "and" || copyForRemoval[0].type === "or")) {
-        copyForRemoval.splice(0, 1);
-      }
-      return copyForRemoval;
-    }
-  }
-
-
-  private scListToElasticSearchQuery(scList: SearchCriterion[]) {
-    const cleanedScList = this.removeEmptyFields(scList);
-
-    //console.log("Cleaned List " + cleanedScList);
-
-    // Set partner parenthesis for every parenthesis
-    let parenthesisStack: Parenthesis[] = [];
-    for (let sc of cleanedScList) {
-      if (PARENTHESIS_TYPE.OPENING_PARENTHESIS === (sc.type)) {
-        parenthesisStack.push(sc as Parenthesis);
-
-      } else if (PARENTHESIS_TYPE.CLOSING_PARENTHESIS === (sc.type)) {
-
-        const closingParenthesis = sc as Parenthesis;
-        const openingParenthesis = parenthesisStack.pop();
-
-        closingParenthesis.partnerParenthesis = openingParenthesis;
-        openingParenthesis!.partnerParenthesis = closingParenthesis;
-      }
-    }
-    //Join all subquery-creations
-    return forkJoin(cleanedScList.map(sc => {
-      const query = sc.toElasticSearchQuery();
-      //console.log("Calling " + sc.type + query);
-      return query;
-    }))
-
-      //Set query in every search criterion object
-      .pipe(
-        tap(queries => cleanedScList.forEach((sc, i) => {
-          //console.log("Transforming list to queries " + sc.type + " -- " + JSON.stringify(queries[i]));
-          sc.query = queries[i];
-        })),
-        //when everything is ready, create complete query
-        map(data => {
-            return this.cleanedScListToElasticSearchQuery(cleanedScList, data, undefined)
-          }
-        )
-      )
-
-  }
-
-  private cleanedScListToElasticSearchQuery(scList: SearchCriterion[], queries: (Object | undefined)[], parentNestedPath: string | undefined): Object | undefined {
-
-    //SearchCriterionBase.logger.debug("Call with list: " + scList);
-
-    //console.log("Transforming list to queries " + queries)
-    if (scList.length == 0) {
-      return {match_all: {}};
-    }
-
-    let resultedQueryBuilder: Object | undefined = {};
-
-    let parenthesisOpened = 0;
-
-    let mainOperators: LogicalOperator[] = [];
-    let lastOperator: LogicalOperator | undefined;
-    let mixedOrAndAnd: boolean = false;
-    let sharedNestedField: string | undefined = "";
-    let criterionList = [...scList];
-
-    //SearchCriterionBase.logger.debug("List: " + criterionList);
-
-    // Remove unnecessary parenthesis
-    while (PARENTHESIS_TYPE.OPENING_PARENTHESIS === (criterionList[0].type)
-    && PARENTHESIS_TYPE.CLOSING_PARENTHESIS === (criterionList[criterionList.length - 1].type)
-    && (criterionList[0] as Parenthesis).partnerParenthesis === (criterionList[criterionList.length - 1] as Parenthesis)) {
-
-      criterionList.splice(0, 1);
-      criterionList.splice(criterionList.length - 1, 1);
-    }
-
-    //SearchCriterionBase.logger.debug("List after removal: " + criterionList);
-
-    for (let sc of criterionList) {
-
-      if (searchTypes[sc.type] && DisplayType.OPERATOR === (searchTypes[sc.type].displayType)) {
-
-        if (parenthesisOpened == 0) {
-
-          const op: LogicalOperator = sc as LogicalOperator;
-          mainOperators.push(op);
-          //Check if this operator changes from last
-          if (lastOperator && ((lastOperator.type === "or" && op.type !== "or")
-            || (lastOperator.type !== "or" && op.type === "or")
-
-          )) {
-            mixedOrAndAnd = true;
-          }
-          lastOperator = op;
-        }
-
-      } else if (PARENTHESIS_TYPE.OPENING_PARENTHESIS === sc.type) {
-        parenthesisOpened++;
-
-      } else if (PARENTHESIS_TYPE.CLOSING_PARENTHESIS === sc.type) {
-        parenthesisOpened--;
-
-      } else {
-
-        // if all criterias have the same nested field and if it's different from the parent
-        // nested
-        // criteria, set a new nested query
-        if ((sharedNestedField && sharedNestedField.length === 0
-            && !(parentNestedPath && sc.getElasticSearchNestedPath() === parentNestedPath))
-          || (!sc.getElasticSearchNestedPath() && sc.getElasticSearchNestedPath() === sharedNestedField
-            && sc.getElasticSearchNestedPath() !== parentNestedPath)) {
-          sharedNestedField = sc.getElasticSearchNestedPath();
-        } else {
-          sharedNestedField = undefined;
-        }
-      }
-    }
-
-    if (sharedNestedField) {
-      //SearchCriterionBase.logger.debug("Found common nested field: " + sharedNestedField);
-    }
-
-    if (criterionList.length == 1) {
-      resultedQueryBuilder = criterionList[0].query;
-
-    } else if (mainOperators.length > 0) {
-
-      //SearchCriterionBase.logger.debug("found main operators: " + mainOperators);
-
-      //console.log("found main operators: " + mainOperators);
-      let should = [];
-      let must = [];
-      let mustNot = [];
-
-      // If there are AND/NOTAND operators mixed with OR operators, divide by OR operators ->
-      // Remove all AND / NOTAND operators
-      if (mixedOrAndAnd) {
-        mainOperators = mainOperators.filter(op => op.type === "or");
-        //mainOperators.removeIf(item -> !SearchCriterion.OR_OPERATOR.equals(item.getSearchCriterion()));
-      }
-
-      for (let i = 0; i < mainOperators.length; i++) {
-        const op: LogicalOperator = mainOperators[i];
-        const indexOfOperator = criterionList.indexOf(op);
-        const nextIndexOfOperator =
-          (mainOperators.length > i + 1) ? criterionList.indexOf(mainOperators[i + 1]) : criterionList.length;
-
-        if (i == 0) {
-          const leftList = criterionList.slice(0, indexOfOperator);
-
-          if ("or" === (op.type)) {
-            should.push(this.cleanedScListToElasticSearchQuery(leftList, queries, sharedNestedField));
-          } else if ("and" === (op.type)) {
-            must.push(this.cleanedScListToElasticSearchQuery(leftList, queries, sharedNestedField));
-          } else if ("not" === (op.type)) {
-            must.push(this.cleanedScListToElasticSearchQuery(leftList, queries, sharedNestedField));
-            //TODO Check if "must" is correct here
-          }
-        }
-
-        const rightList = criterionList.slice(indexOfOperator + 1, nextIndexOfOperator);
-
-        if ("or" === (op.type)) {
-          should.push(this.cleanedScListToElasticSearchQuery(rightList, queries, sharedNestedField));
-        } else if ("and" === (op.type)) {
-          must.push(this.cleanedScListToElasticSearchQuery(rightList, queries, sharedNestedField));
-        } else if ("not" === (op.type)) {
-          mustNot.push(this.cleanedScListToElasticSearchQuery(rightList, queries, sharedNestedField));
-        }
-      }
-
-      resultedQueryBuilder =
-        {
-          bool: {
-            ...should.length > 0 && {should: should},
-            ...must.length > 0 && {must: must},
-            ...mustNot.length > 0 && {must_not: mustNot},
-          }
-        }
-    }
-
-    return resultedQueryBuilder;
-
-  }
-
-
-  prepareQuery() {
-    const searchCriterions = this.flexibleFields.controls.map(fc => fc as SearchCriterion);
-    searchCriterions.unshift(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.contextListSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.itemStateListSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.genreListSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.publicationStateSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.fileSectionSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-    searchCriterions.push(new LogicalOperator("and"));
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.OPENING_PARENTHESIS));
-    searchCriterions.push(this.locatorSectionSearchCriterion);
-    searchCriterions.push(new Parenthesis(PARENTHESIS_TYPE.CLOSING_PARENTHESIS));
-
-
-    return searchCriterions
-  }
-
   search() {
 
-    this.scListToElasticSearchQuery(this.prepareQuery())
+    this.advancedSearchService.getElasticsearchQuery(this.searchForm)
       .subscribe(query => {
         this.matomoTracker.trackSiteSearch("ADVANCED_SEARCH", "advanced")
         this.searchStateService.type="advanced";
@@ -701,8 +368,17 @@ export class ItemSearchAdvancedComponent {
     console.log("length of form", JSON.stringify(this.result).length);
   }
 
+  getSearchFormJsonLinkCallback = ()=> {
+    //const urlString = window.location.toString();
+    const url = new URL(window.location.pathname, window.location.origin);
+    const jsonString = JSON.stringify(this.getCleanSearchForm().value);
+    url.searchParams.set('searchForm', jsonString);
+    console.log("length of form", jsonString.length);
+    return url.toString();
+  }
+
   private getCleanSearchForm(): FormGroup<any> {
-    const cleanedFlexibleFields = this.removeEmptyFields(this.flexibleFields.controls.map(fc => fc as SearchCriterion));
+    const cleanedFlexibleFields = this.advancedSearchService.removeEmptyFields(this.flexibleFields.controls.map(fc => fc as SearchCriterion));
     const searchFormCleaned = this.fb.group({
       ...(cleanedFlexibleFields.length > 0 && {flexibleFields: this.fb.array(cleanedFlexibleFields)}),
       ...(!this.contextListSearchCriterion.isEmpty() && {contexts: this.contextListSearchCriterion.getCleanedForm()}),
@@ -717,7 +393,7 @@ export class ItemSearchAdvancedComponent {
   }
 
   show_query() {
-    this.scListToElasticSearchQuery(this.prepareQuery()).subscribe(query => this.query = query);
+    this.advancedSearchService.getElasticsearchQuery(this.searchForm).subscribe(query => this.query = query);
   }
 
 
@@ -791,6 +467,21 @@ export class ItemSearchAdvancedComponent {
 
   get isValid() {
     return this.searchForm.valid && this.currentlyOpenedParenthesis === undefined && this.flexibleFields.controls.length > 0;
+  }
+
+
+  /**
+   * Copies a JSON-based form link to the clipboard when triggered by a specific keyboard shortcut.
+   * @param {Event} e - The keyboard event that invokes the method.
+   * @return {void} Does not return a value; performs an action of copying the link to the clipboard and displays a success message.
+   */
+  @HostListener('document:keydown.control.shift.c', ['$event'])
+  copyFormJsonLink(e: Event) {
+    e.preventDefault();
+    this.clipboard.copy(this.getSearchFormJsonLinkCallback());
+    this.msgService.success("Secret link copied successfully to clipboard.")
+
+
   }
 
   protected readonly SubjectClassification = SubjectClassification;
