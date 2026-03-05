@@ -9,7 +9,7 @@
                     aria-controls="accordionBodyStandardGroup">
                     {{ 'MetadataFields.basicData' | translate}}
                     @if (hasFormValues(meta_form.get('title')) || hasFormValues(alternativeTitles)) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -120,7 +120,7 @@
                     aria-controls="accordionBodyCreatorGroup">
                     {{ 'MetadataFields.personsOrganizations' | translate }}
                     @if (hasFormValues(creators)) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -187,7 +187,7 @@
                     aria-controls="accordionBodyDatesGroup">
                     {{ 'MetadataFields.date' | translate }}
                     @if (hasFormValues(meta_form.get('datePublishedInPrint')) || hasFormValues(meta_form.get('datePublishedOnline')) || hasFormValues(meta_form.get('dateAccepted')) || hasFormValues(meta_form.get('dateSubmitted')) || hasFormValues(meta_form.get('dateCreated')) || hasFormValues(meta_form.get('dateModified'))) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -296,7 +296,7 @@
                     aria-controls="accordionBodyDetailsGroup">
                     {{ 'MetadataFields.details' | translate }}
                     @if (hasFormValues(languages) || hasFormValues(meta_form.get('totalNumberOfPages')) || hasFormValues(meta_form.get('duration')) || hasFormValues(meta_form.get('reviewMethod')) || hasFormValues(identifiers) || hasFormValues(abstracts) || hasFormValues(meta_form.get('freeKeywords')) || hasFormValues(subjects) || hasFormValues(meta_form.get('tableOfContents'))) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -533,7 +533,7 @@
                     aria-controls="accordionBodyProjectInfoGroup">
                     {{ 'MetadataFields.projectInfo' | translate }}
                     @if (hasFormValues(projectInfo)) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -579,7 +579,7 @@
                     aria-controls="accordionBodyLegalCaseGroup">
                     {{ 'MetadataFields.legalCase' | translate }}
                     @if (hasFormValues(legalCase)) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
@@ -602,7 +602,7 @@
                     (click)="addSourceOnExpand($event)">
                     {{ 'MetadataFields.source' | translate }}
                     @if (hasFormValues(sources)) {
-                    <div class="small"><i class="bi bi-chat-square-dots mx-2" title="This section contains data"></i></div>
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
                     }
                 </button>
             </h2>
