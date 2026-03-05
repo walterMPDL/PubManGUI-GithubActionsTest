@@ -335,7 +335,7 @@ export class ItemFormComponent implements OnInit {
   }
 
   dropExternalReferences(event: CdkDragDrop<string[]>) {
-    this.moveItemInArray(this.internalFiles, event.previousIndex, event.currentIndex);
+    this.moveItemInArray(this.externalReferences, event.previousIndex, event.currentIndex);
   }
 
   /** Copied from Angular CDK to make our FormArrays work with drag and drop */
