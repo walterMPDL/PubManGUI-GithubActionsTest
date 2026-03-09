@@ -75,12 +75,12 @@ export class ChangePasswordComponent {
     let passWordChange$: Observable<any> = EMPTY;
 
     const newPasswd = this.changePasswordForm.get('newPassword1')?.value;
-    //if(this.principal) {
+    if(this.principal) {
       passWordChange$ = this.usersService.changePassword(this.principal?.user?.objectId!, newPasswd, true, {globalErrorDisplay: false});
-    //}
-    //else if(this.username && this.oneTimePassword) {
-     // passWordChange$ = this.usersService.changePasswordOneTime(this.username, this.oneTimePassword, newPasswd, {globalErrorDisplay: false});
-    //}
+    }
+    else if(this.username && this.oneTimePassword) {
+      passWordChange$ = this.usersService.changePasswordOneTime(this.username, this.oneTimePassword, newPasswd, {globalErrorDisplay: false});
+    }
 
     passWordChange$
       .pipe(
