@@ -75,8 +75,6 @@ export class ItemListComponent implements AfterViewInit{
   currentQuery: any;
   currentCompleteQuery: any;
 
-  queryParamSubscription!: Subscription;
-  itemUpdatedSubscription!: Subscription;
   selectionServiceSubscription!: Subscription;
   routerEventsSubscription!: Subscription;
 
@@ -131,8 +129,6 @@ export class ItemListComponent implements AfterViewInit{
 
   ngOnDestroy() {
     this.searchQuerySubscription.unsubscribe();
-    this.queryParamSubscription.unsubscribe()
-    this.itemUpdatedSubscription.unsubscribe();
     this.selectionServiceSubscription.unsubscribe();
     this.routerEventsSubscription.unsubscribe();
   }
