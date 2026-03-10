@@ -1,6 +1,6 @@
 @if(!onlyForTouched || control?.touched)  {
 @for (msg of errorMessages; track msg) {
     <!-- Use ng-invalid here to be compatible with AccordionGroupValidationDirective -->
-    <div class="small ng-invalid"><i class="bi bi-exclamation-circle-fill" ></i> {{msg}}</div>
+    <div class="small ng-invalid text-danger"><i class="bi bi-exclamation-circle-fill" ></i> {{msg}}</div>
   }
 }
