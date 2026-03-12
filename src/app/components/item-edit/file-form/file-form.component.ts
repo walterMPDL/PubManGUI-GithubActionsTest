@@ -14,6 +14,7 @@ import { ValidationErrorMessageDirective } from "../../../directives/validation-
 import { ConeAutosuggestComponent } from "../../shared/cone-autosuggest/cone-autosuggest.component";
 import { tap } from "rxjs";
 import { ConeService } from "../../../services/cone.service";
+import { isFormValueEmpty } from 'src/app/utils/utils';
 
 @Component({
   selector: 'pure-file-form',
@@ -52,6 +53,7 @@ export class FileFormComponent {
   error_types = Errors;
 
   audiencePriorityList = ['mpg'];
+  isContentFormDisabled = false;
 
   constructor(miscellaneousService: MiscellaneousService, private coneService: ConeService) {
     miscellaneousService.retrieveIpList().subscribe(
@@ -59,6 +61,13 @@ export class FileFormComponent {
         this.sortAudienceList(result); /* console.log('Miscellaneous IPList: ', this.ipRangeCompleteList) */
       }
     )
+  }
+
+  ngOnInit(): void {
+    if (this.file_form?.get('storage')?.value === 'EXTERNAL_URL' && !isFormValueEmpty(this.file_form.get('content')?.value))
+      { 
+        this.file_form.get('content')?.disable(); 
+      }    
   }
 
   get allowedAudienceIds() {
