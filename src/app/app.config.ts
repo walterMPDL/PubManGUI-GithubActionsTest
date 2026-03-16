@@ -92,7 +92,6 @@ export const appConfig: ApplicationConfig = {
       //Set language at beginning. Use from local storage or browser
       const userLocale = localStorage.getItem('locale');
       const browserLocale = translateSvc.getBrowserLang() || 'en';
-      console.log("Browser locale: " + browserLocale);
 
       let finalLocale = translateSvc.getDefaultLang();
       if (userLocale) {
