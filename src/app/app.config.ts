@@ -92,12 +92,17 @@ export const appConfig: ApplicationConfig = {
       //Set language at beginning. Use from local storage or browser
       const userLocale = localStorage.getItem('locale');
       const browserLocale = translateSvc.getBrowserLang() || 'en';
+      console.log("Browser locale: " + browserLocale);
 
       let finalLocale = translateSvc.getDefaultLang();
       if (userLocale) {
         finalLocale = userLocale;
       } else {
-        finalLocale = browserLocale;
+        if (browserLocale ==='de' || browserLocale==='en')
+        {
+          finalLocale = browserLocale;
+        }
+
       }
 
       //Wait until lang is loaded, so that translateService.instant() method can be used any time

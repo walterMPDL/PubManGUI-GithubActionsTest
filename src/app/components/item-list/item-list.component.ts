@@ -219,7 +219,7 @@ export class ItemListComponent implements AfterViewInit{
       ...runtimeMappings && {runtime_mappings: runtimeMappings},
       ...aggQueries && {aggs: aggQueries}
     }
-    console.log("List query", completeQuery)
+    console.log("List query", JSON.stringify(completeQuery))
 
     this.currentCompleteQuery = completeQuery;
     this.search(completeQuery);
