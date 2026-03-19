@@ -97,7 +97,11 @@ export const appConfig: ApplicationConfig = {
       if (userLocale) {
         finalLocale = userLocale;
       } else {
-        finalLocale = browserLocale;
+        if (browserLocale ==='de' || browserLocale==='en')
+        {
+          finalLocale = browserLocale;
+        }
+
       }
 
       //Wait until lang is loaded, so that translateService.instant() method can be used any time

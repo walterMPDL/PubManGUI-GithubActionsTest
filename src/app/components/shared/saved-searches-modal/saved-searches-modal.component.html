@@ -38,8 +38,8 @@
     <table class="table table-hover">
 
       <thead>
-      <tr>
-        <th scope="col">{{ 'SavedSearches.name' | translate }}</th>
+      <tr class="border-bottom">
+        <th scope="col" style="padding-left: 0.8rem;">{{ 'SavedSearches.name' | translate }}</th>
         <th scope="col">{{ 'MetadataFields.dateModified' | translate }}</th>
         <th scope="col">{{ 'SavedSearches.copyLinkHeader' | translate }}</th>
         <th scope="col">{{ 'SavedSearches.actions' | translate }}</th>
@@ -48,20 +48,20 @@
 
       <tbody>
         @for (savedSearch of savedSearches; track savedSearch; let i = $index;) {
-          <tr>
+          <tr class="border-bottom" style="line-height: 3rem;">
             <td scope="row" class="text-break">
               <button class="btn btn-link text-start" (click)="applySearchFromHistory(i)">{{ savedSearch.name + ' '}}</button>
             </td>
-            <td class="">
+            <td>
               {{savedSearch.creationDate | date:'yyyy-MM-dd HH:mm:ss'}}
             </td>
-            <td class="">
-              <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkMask(savedSearch.objectId!)"> {{'SavedSearches.mask' | translate}}</button>
-              <button class="btn btn-sm btn-primary me-2" pureCopyButton [textToCopy]="getSavedSearchLinkResults(savedSearch.objectId!)"> {{'SavedSearches.result' | translate}}</button>
+            <td>
+              <button class="btn btn-sm btn-primary me-2 opacity-75" pureCopyButton [textToCopy]="getSavedSearchLinkMask(savedSearch.objectId!)"> {{'SavedSearches.mask' | translate}}</button>
+              <button class="btn btn-sm btn-primary me-2 opacity-75" pureCopyButton [textToCopy]="getSavedSearchLinkResults(savedSearch.objectId!)"> {{'SavedSearches.result' | translate}}</button>
 
-            <td class="">
-              <button class="btn btn-sm btn-warning me-2" (click)="updateSavedSearch(i)" [ngbTooltip]="'SavedSearches.update' | translate"><span class="material-symbols-outlined">change_circle</span></button>
-              <button class="btn btn-sm btn-danger" (click)="deleteSavedSearch(i)" [ngbTooltip]="'SavedSearches.delete' | translate"><i class="bi bi-trash"></i></button>
+            <td>
+              <button class="btn btn-sm btn-warning me-2 opacity-75" (click)="updateSavedSearch(i)" [ngbTooltip]="'SavedSearches.update' | translate"><span class="material-symbols-outlined">change_circle</span></button>
+              <button class="btn btn-sm btn-danger opacity-75" (click)="deleteSavedSearch(i)" [ngbTooltip]="'SavedSearches.delete' | translate"><i class="bi bi-trash"></i></button>
 
             </td>
           </tr>

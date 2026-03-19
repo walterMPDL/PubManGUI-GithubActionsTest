@@ -13,11 +13,12 @@ export const fileDataValidator: ValidatorFn = (control: AbstractControl,): Valid
   if (file != null) {
     //External reference with missing content
     if (Storage.EXTERNAL_URL === file.storage) {
-       if(isFormValueEmpty(file.content)) {
+      console.log('Validating external URL file with content: ', control.get("content")?.value);
+      if(isFormValueEmpty(control.get("content")?.value)) {
         control.get("content")?.setErrors({[error_types.COMPONENT_CONTENT_NOT_PROVIDED] : true});
         //currentErrors[error_types.COMPONENT_CONTENT_NOT_PROVIDED] =  true;
       }
-       else if(!URL_PATTERN.test(file.content)) {
+       else if(!URL_PATTERN.test(control.get("content")?.value)) {
          control.get("content")?.setErrors({[error_types.LOCATOR_IS_NO_URI] : true});
        }
       else {

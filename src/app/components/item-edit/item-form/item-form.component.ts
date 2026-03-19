@@ -45,7 +45,7 @@ import { BootstrapValidationDirective } from "../../../directives/bootstrap-vali
 import { LoadingComponent } from "../../shared/loading/loading.component";
 import { MiscellaneousService } from "../../../services/pubman-rest-client/miscellaneous.service";
 import { AccordionGroupValidationDirective } from "../../../directives/accordion-group-validation.directive";
-
+import { hasFormValues } from '../../../utils/utils';
 import { ValidationErrorMessageDirective } from "../../../directives/validation-error-message.directive";
 
 @Component({
@@ -87,6 +87,7 @@ export class ItemFormComponent implements OnInit {
   item!: ItemVersionVO;
   form_2_submit: any;
   internalFiles!: FormArray<FormGroup<ControlType<FileDbVO>>>;
+  hasFormValues = hasFormValues;
   switchFileSortingMode: boolean = false;
   user_contexts: ContextDbRO[] = [];
 
@@ -205,6 +206,7 @@ export class ItemFormComponent implements OnInit {
         }
       }
     }
+    this.files.clear();
     //this.internalFiles?.updateValueAndValidity();
     //this.externalReferences?.updateValueAndValidity();
   }
@@ -334,7 +336,7 @@ export class ItemFormComponent implements OnInit {
   }
 
   dropExternalReferences(event: CdkDragDrop<string[]>) {
-    this.moveItemInArray(this.internalFiles, event.previousIndex, event.currentIndex);
+    this.moveItemInArray(this.externalReferences, event.previousIndex, event.currentIndex);
   }
 
   /** Copied from Angular CDK to make our FormArrays work with drag and drop */

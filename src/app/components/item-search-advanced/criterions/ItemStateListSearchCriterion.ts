@@ -46,7 +46,7 @@ export class ItemStateListSearchCriterion extends SearchCriterion {
 
   override toElasticSearchQuery(): Observable<Object | undefined> {
 
-    let shouldClauses: Object[] = [];
+
 
     const selectedStates = Object.keys(this.publicationStatesFormGroup.controls)
       .filter(genre => this.publicationStatesFormGroup.get(genre)?.value);
@@ -68,6 +68,9 @@ export class ItemStateListSearchCriterion extends SearchCriterion {
       )
     }
 
+    let shouldClauses: Object[] = [];
+    let mustNotClauses: any[] = [];
+
       selectedStates.forEach(pubState => {
       switch (pubState) {
         case "RELEASED" : {
@@ -87,11 +90,15 @@ export class ItemStateListSearchCriterion extends SearchCriterion {
             bool: {
               must: [baseElasticSearchQueryBuilder({index: "versionState", type: "keyword"}, pubState)],
               must_not:[
-                baseElasticSearchQueryBuilder({index: "publicState", type: "keyword"}, "WITHDRAWN"),
-                this.aaService.filterOutQuery([pubState])
+                baseElasticSearchQueryBuilder({index: "publicState", type: "keyword"}, "WITHDRAWN")
               ],
             }
           });
+          const filterOutQuery = this.aaService.filterOutQuery([pubState])
+          if(filterOutQuery) {
+            mustNotClauses.push(this.aaService.filterOutQuery([pubState]));
+          }
+
           break;
         }
         case "WITHDRAWN" : {
@@ -107,7 +114,8 @@ export class ItemStateListSearchCriterion extends SearchCriterion {
 
     return of({
       bool: {
-        should: shouldClauses
+        should: shouldClauses,
+        ...mustNotClauses.length > 0 && {must_not: mustNotClauses}
       }
     })
 

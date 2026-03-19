@@ -8,6 +8,9 @@
                     data-bs-target="#accordionBodyStandardGroup" aria-expanded="true"
                     aria-controls="accordionBodyStandardGroup">
                     {{ 'MetadataFields.basicData' | translate}}
+                    @if (hasFormValues(meta_form.get('title')) || hasFormValues(alternativeTitles)) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyStandardGroup" class="accordion-collapse collapse show">
@@ -116,6 +119,9 @@
                     data-bs-target="#accordionBodyCreatorGroup" aria-expanded="true"
                     aria-controls="accordionBodyCreatorGroup">
                     {{ 'MetadataFields.personsOrganizations' | translate }}
+                    @if (hasFormValues(creators)) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyCreatorGroup" class="accordion-collapse collapse show">
@@ -180,6 +186,9 @@
                     data-bs-target="#accordionBodyDatesGroup" aria-expanded="true"
                     aria-controls="accordionBodyDatesGroup">
                     {{ 'MetadataFields.date' | translate }}
+                    @if (hasFormValues(meta_form.get('datePublishedInPrint')) || hasFormValues(meta_form.get('datePublishedOnline')) || hasFormValues(meta_form.get('dateAccepted')) || hasFormValues(meta_form.get('dateSubmitted')) || hasFormValues(meta_form.get('dateCreated')) || hasFormValues(meta_form.get('dateModified'))) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyDatesGroup" class="accordion-collapse collapse show">
@@ -286,6 +295,9 @@
                     data-bs-target="#accordionBodyDetailsGroup" aria-expanded="true"
                     aria-controls="accordionBodyDetailsGroup">
                     {{ 'MetadataFields.details' | translate }}
+                    @if (hasFormValues(languages) || hasFormValues(meta_form.get('totalNumberOfPages')) || hasFormValues(meta_form.get('duration')) || hasFormValues(meta_form.get('reviewMethod')) || hasFormValues(identifiers) || hasFormValues(abstracts) || hasFormValues(meta_form.get('freeKeywords')) || hasFormValues(subjects) || hasFormValues(meta_form.get('tableOfContents'))) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyDetailsGroup" class="accordion-collapse collapse">
@@ -499,6 +511,9 @@
                     data-bs-target="#accordionBodyEventGroup" aria-expanded="true"
                     aria-controls="accordionBodyEventGroup">
                     {{ 'MetadataFields.event' | translate }}
+                    @if (hasFormValues(event)) {
+                    <i class="bi bi-chat-square-dots ms-2" title="This section contains data" style="display: inline !important;"></i>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyEventGroup" class="accordion-collapse collapse"
@@ -517,6 +532,9 @@
                     data-bs-target="#accordionBodyProjectInfoGroup" aria-expanded="true"
                     aria-controls="accordionBodyProjectInfoGroup">
                     {{ 'MetadataFields.projectInfo' | translate }}
+                    @if (hasFormValues(projectInfo)) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyProjectInfoGroup" class="accordion-collapse collapse">
@@ -560,6 +578,9 @@
                     data-bs-target="#accordionBodyLegalCaseGroup" aria-expanded="true"
                     aria-controls="accordionBodyLegalCaseGroup">
                     {{ 'MetadataFields.legalCase' | translate }}
+                    @if (hasFormValues(legalCase)) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodyLegalCaseGroup" class="accordion-collapse collapse">
@@ -580,6 +601,9 @@
                     [ngClass]="{'collapsed' : genreSpecificResource.value().properties.sources.optional}"
                     (click)="addSourceOnExpand($event)">
                     {{ 'MetadataFields.source' | translate }}
+                    @if (hasFormValues(sources)) {
+                    <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+                    }
                 </button>
             </h2>
             <div id="accordionBodySourcesGroup" class="accordion-collapse collapse"

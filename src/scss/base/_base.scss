@@ -78,3 +78,7 @@ ngb-typeahead-window {
     box-shadow: none !important;
   }
 }
+
+input[readonly] {
+  background-color: $body-secondary-bg;
+}

@@ -52,6 +52,7 @@ import { catchError, finalize, Subject, takeUntil, tap, throwError } from "rxjs"
 import { isEmptyCreator } from "../../../utils/item-utils";
 import { ValidationErrorMessageDirective } from "../../../directives/validation-error-message.directive";
 import { isControlValueEmpty } from 'src/app/utils/utils_final';
+import { hasFormValues } from '../../../utils/utils';
 
 
 @Component({
@@ -114,6 +115,7 @@ export class MetadataFormComponent implements OnInit {
 
   multipleCreators = new FormControl<string>('');
   loading: boolean = false;
+  hasFormValues = hasFormValues;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -176,7 +178,6 @@ export class MetadataFormComponent implements OnInit {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
-
 
   get alternativeTitles() {
     return this.meta_form.get('alternativeTitles') as FormArray<FormGroup<ControlType<AlternativeTitleVO>>>;

@@ -68,7 +68,7 @@
         <div class="d-sm-flex flex-sm-row gap-1 mb-1">
             <div class="col-sm">
                 <label for="file_content" class="col-form-label">{{ 'FileMetadataFields.url' | translate }}</label>
-                <input type="text" class="form-control" id="file_content" name="content" formControlName="content">
+                <input type="text" class="form-control" id="file_content" name="content" formControlName="content" [readOnly]="isReadOnlyContent">
                 <!--
               @if (file_form.errors?.[error_types.COMPONENT_CONTENT_NOT_PROVIDED]) {
                 <div class="pure-invalid">{{ 'validation.required' | translate}}</div>

@@ -39,7 +39,7 @@ export class AccordionGroupValidationDirective {
     this.accordionButtonElement = this.elementRef?.nativeElement.querySelector('.accordion-button');
     //Add hidden validation symbol
     this.accordionButtonElement?.insertAdjacentHTML('beforeend', '<span class="bi bi-exclamation-circle-fill ms-1 d-none"></span>');
-    this.validationSymbolElement = this.accordionButtonElement?.querySelector(".bi");
+    this.validationSymbolElement = this.accordionButtonElement?.querySelector(".bi.bi-exclamation-circle-fill");
 
   }
 

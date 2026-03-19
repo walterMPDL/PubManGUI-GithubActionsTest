@@ -55,6 +55,9 @@ aaService.principal.getValue().isAdmin)
           <button class="accordion-button rounded-0 collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#accordionBodyFilesGroup" aria-expanded="true" aria-controls="accordionBodyFilesGroup">
             {{ 'MetadataFields.filesLocators' | translate }}
+            @if (hasFormValues(internalFiles) || hasFormValues(externalReferences)) {
+            <span class="bi bi-chat-square-dots mx-2" title="This section contains data"></span>
+            }
           </button>
         </h2>
         <div id="accordionBodyFilesGroup" class="accordion-collapse collapse show">

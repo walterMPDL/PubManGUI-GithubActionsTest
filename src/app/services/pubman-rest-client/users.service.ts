@@ -52,7 +52,7 @@ export class UsersService extends PubmanSearchableGenericRestClientService<Accou
     const path = this.subPath + '/' + userId + '/password';
     const body = password;
     let params: HttpParams = new HttpParams()
-      .set('passwordChangeFlag', passwordChangeFlag);
+      .set('changePasswordFlag', passwordChangeFlag);
     const mergedOpts = this.createOrMergeHttpOptions(opts, {params: params});
 
     return this.httpPutText(path, body, mergedOpts);

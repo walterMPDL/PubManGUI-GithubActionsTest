@@ -1,6 +1,4 @@
 import { SearchCriterion } from "../SearchCriterion";
-import { FormControl, FormGroup } from "@angular/forms";
-import { DisplayType } from "../search_config";
 import { Observable, of } from "rxjs";
 
 export enum PARENTHESIS_TYPE {
@@ -29,13 +27,6 @@ export class Parenthesis extends SearchCriterion{
     return undefined;
   }
 
-  getDisplayType(): DisplayType {
-    return DisplayType.PARENTHESIS;
-  }
-
-  initForm(): FormGroup | null {
-    return null;
-  }
 
   isEmpty(): boolean {
     return false;

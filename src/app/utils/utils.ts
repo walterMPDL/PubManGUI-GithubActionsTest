@@ -1,4 +1,5 @@
 import { IdType, ItemVersionRO } from "../model/inge";
+import { FormArray, FormGroup, FormControl } from "@angular/forms";
 
 const reParamSplit = /\s*;\s*/
 const reHeaderSplit = /\s*:\s*/
@@ -8,6 +9,40 @@ const reQuotesTrim = /(?:^["'\s]*)|(?:["'\s]*$)/g
 
 const isFormValueEmpty = (value: any) => {
   return value === null || value === undefined || value === '' || value === '0: null' || ((typeof value === 'string') && value.trim().length === 0)
+}
+
+/**
+ * Checks if a form (FormGroup or FormArray) contains any values that are not undefined, null, or empty string
+ */
+const hasFormValues = (form: FormGroup | FormArray | any): boolean => {
+  if (!form) return false;
+
+  // direct FormControl (or similar) – just check its value
+  if (form instanceof FormControl) {
+    return !isFormValueEmpty(form.value);
+  }
+  
+  if (form instanceof FormArray) {
+    return form.length > 0 && form.controls.some((control: any) => hasFormValues(control));
+  }
+  
+  if (form instanceof FormGroup) {
+    return Object.keys(form.controls).some((key) => {
+      const control = form.get(key);
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        return hasFormValues(control);
+      }
+      const value = control?.value;
+      return !isFormValueEmpty(value);
+    });
+  }
+
+  // fallback for any other value-like object
+  if (form && typeof form === 'object' && 'value' in form) {
+    return !isFormValueEmpty(form.value);
+  }
+
+  return false;
 }
 
 const versionIdToObjectId = (id: string): string => {
@@ -84,5 +119,6 @@ export {
   contentDispositionParser,
   versionIdToObjectId,
   itemToVersionId,
-  isFormValueEmpty
+  isFormValueEmpty,
+  hasFormValues
 }
