@@ -84,8 +84,7 @@ export class ImportsService {
   }
 
   getDataFetch(url: string, query: string): Observable<ItemVersionVO> {
-    //const importResponse: Observable<ItemVersionVO> = this.http.get<ItemVersionVO>(url + query, { withCredentials: true, context: context })
-    const importResponse: Observable<ItemVersionVO> = this.http.request<ItemVersionVO>('GET', url + query, { withCredentials: true, context: this.context })
+   const importResponse: Observable<ItemVersionVO> = this.http.request<ItemVersionVO>('GET', url + query, { withCredentials: true })
       .pipe(
         tap((value: ItemVersionVO) => {
           this.#lastFetch.set(of(value));
