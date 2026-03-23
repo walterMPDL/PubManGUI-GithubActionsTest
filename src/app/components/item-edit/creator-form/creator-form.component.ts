@@ -45,6 +45,10 @@ export class CreatorFormComponent {
 
   cone_uri = environment.cone_instance_uri;
 
+  ngOnInit() {
+    this.initRole();
+  }
+
   moveUp() {
     this.notice.emit({ action: 'moveUp', index: this.index });
   }
