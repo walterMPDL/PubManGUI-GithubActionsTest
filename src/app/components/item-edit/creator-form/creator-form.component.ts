@@ -31,6 +31,7 @@ export class CreatorFormComponent {
   @Input() index!: number;
   @Input() index_length!: number;
   @Input() isSource?: boolean = false;
+  @Input() useDragDrop?: boolean = false;
   @Output() notice = new EventEmitter();
 
   coneService = inject(ConeService);
@@ -46,6 +47,14 @@ export class CreatorFormComponent {
 
   ngOnInit() {
     this.initRole();
+  }
+
+  moveUp() {
+    this.notice.emit({ action: 'moveUp', index: this.index });
+  }
+
+  moveDown() {
+    this.notice.emit({ action: 'moveDown', index: this.index });
   }
 
   initRole() {

@@ -14,9 +14,14 @@
                 -->
       </div>
       <div class="d-sm-flex flex-sm-row gap-1 mb-1 align-items-start ">
-        <div class="col-sm-auto" cdkDragHandle>
+        <div class="col-sm-auto">
           <label class="col-form-label pe-2">&nbsp;</label><br />
-          <div class="material-symbols-outlined drag-list-box">drag_indicator</div>
+          @if(useDragDrop) {
+            <div cdkDragHandle class="material-symbols-outlined drag-list-box">drag_indicator</div>
+          } @else {
+            <button type="button" class="btn btn-sm btn-outline-secondary me-1" (click)="moveUp()" [disabled]="index === 0" title="Move up">↑</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="moveDown()" [disabled]="index === index_length - 1" title="Move down">↓</button>
+          }
         </div>
 
         <div class="col-sm-2">

@@ -1,16 +1,13 @@
 import {
-  ContentChild,
+  ComponentRef,
   Directive,
   ElementRef,
-  HostBinding,
   Input,
   Optional, Renderer2,
   Self,
-  ViewChild,
   ViewContainerRef,
-  ViewRef
 } from '@angular/core';
-import { AbstractControl, AbstractControlDirective, ControlContainer, NgControl } from "@angular/forms";
+import { AbstractControl, ControlContainer, NgControl } from "@angular/forms";
 import { ValidationErrorComponent } from "../components/shared/validation-error/validation-error.component";
 
 /**
@@ -55,14 +52,12 @@ export class ValidationErrorMessageDirective {
   @Input() validationMessagePosition : 'top' | 'bottom' | 'ignore' = 'bottom'
 
   private control : AbstractControl | null = null;
-  private controlName
+  private controlName;
+  private errorCompRef?: ComponentRef<ValidationErrorComponent>;
 
   constructor(@Self() @Optional() private cd: NgControl, @Self() @Optional() private cont: ControlContainer, private elementRef: ElementRef, private viewContainerRef: ViewContainerRef, private renderer: Renderer2
   ) {
-    //this.control = cont?.control || cd?.control;
-
     this.controlName = cont?.name?.toString() || cd?.name?.toString() || '';
-
   }
 
   ngOnInit() {
@@ -104,24 +99,41 @@ export class ValidationErrorMessageDirective {
 
 
       //Create validation message component
-      const errorCompRef = this.viewContainerRef.createComponent(ValidationErrorComponent);
-      errorCompRef.instance.name = this.controlName;
-      errorCompRef.instance.onlyForTouched = false;
+      this.errorCompRef = this.viewContainerRef.createComponent(ValidationErrorComponent);
+      this.errorCompRef.instance.name = this.controlName;
+      this.errorCompRef.instance.onlyForTouched = false;
       if(this.cd?.control) {
-        errorCompRef.instance.control = this.cd.control;
+        this.errorCompRef.instance.control = this.cd.control;
       }
       else if (this.cont?.control) {
-        errorCompRef.instance.control = this.cont.control;
+        this.errorCompRef.instance.control = this.cont.control;
       }
 
-      const errorElement = errorCompRef.location.nativeElement;
+      const errorElement = this.errorCompRef.location.nativeElement;
 
       //Move component to correct position
-
       this.renderer.insertBefore(parentElement, errorElement, referenceElement, true);
 
     }
 
+  }
+
+  /**
+   * Called on every change detection cycle. Detects when the underlying form
+   * control instance changes (e.g. CDK virtual scroll view recycling reuses this
+   * directive instance for a different creator row).  When the reference changes,
+   * push the fresh control into the ValidationErrorComponent so it subscribes to
+   * the correct control's event stream.
+   */
+  ngDoCheck() {
+    if (!this.errorCompRef) {
+      return;
+    }
+    const latestControl = this.cont?.control || this.cd?.control;
+    if (latestControl !== this.control) {
+      this.control = latestControl;
+      this.errorCompRef.instance.control = latestControl;
+    }
   }
 
 }

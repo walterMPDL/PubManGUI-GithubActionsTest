@@ -1,17 +1,10 @@
 import {
-  ContentChild,
   Directive,
-  ElementRef,
   HostBinding,
-  Input,
-  Optional, Renderer2,
+  Optional,
   Self,
-  ViewChild,
-  ViewContainerRef,
-  ViewRef
 } from '@angular/core';
-import { AbstractControl, AbstractControlDirective, ControlContainer, NgControl } from "@angular/forms";
-import { ValidationErrorComponent } from "../components/shared/validation-error/validation-error.component";
+import { AbstractControl, ControlContainer, NgControl } from "@angular/forms";
 
 /**
  * Directive to apply Bootstrap validation styling to Angular form elements based on their validation state.
@@ -27,20 +20,15 @@ import { ValidationErrorComponent } from "../components/shared/validation-error/
 
 export class BootstrapValidationDirective {
 
-  private control : AbstractControl | null = null;
-
   constructor(@Self() @Optional() private cd: NgControl, @Self() @Optional() private cont: ControlContainer) {
-
   }
-
-  ngOnInit() {
-    this.control = this.cd?.control || this.cont?.control;
-  }
-
 
   @HostBinding('class.is-invalid')
   get isInvalid(): boolean {
-    return isShowValidationError(this.control);
+    // Always read the current control dynamically so that CDK virtual scroll
+    // view recycling (where ngOnInit is NOT re-called) picks up the refreshed
+    // control reference after FormControlDirective.ngOnChanges runs.
+    return isShowValidationError(this.cd?.control || this.cont?.control);
   }
 
 }

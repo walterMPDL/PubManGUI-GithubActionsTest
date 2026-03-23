@@ -17,10 +17,10 @@ import { MessageService } from 'src/app/services/message.service';
 import { environment } from 'src/environments/environment';
 import { AccountUserDbVO, ContextDbVO, ItemVersionState } from "../model/inge";
 import { ContextsService } from "./pubman-rest-client/contexts.service";
-import {Router, RouteReuseStrategy} from "@angular/router";
-import { DISPLAY_ERROR, PubManHttpErrorResponse, SILENT_LOGOUT } from "./interceptors/http-error.interceptor";
-import { TranslateService } from "@ngx-translate/core";
-import {PureRrs} from "./pure-rrs";
+import { Router, RouteReuseStrategy } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { DISPLAY_ERROR, SILENT_LOGOUT } from './interceptors/http-context-tokens';
+import { PureRrs } from './pure-rrs';
 
 
 export class Principal{

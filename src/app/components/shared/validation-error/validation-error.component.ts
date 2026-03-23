@@ -18,28 +18,41 @@ import {
 })
 export class ValidationErrorComponent {
 
-  @Input() control: AbstractControl<any> | null = null;
+  private _control: AbstractControl<any> | null = null;
   @Input() validationError?: ValidationErrors;
   @Input() name = '';
-
   @Input() onlyForTouched = true;
+
+  /** Setter re-subscribes to the new control when the reference changes (e.g. CDK virtual scroll view recycling). */
+  @Input() set control(value: AbstractControl<any> | null) {
+    if (value === this._control) {
+      return;
+    }
+    this.statusSubscription?.unsubscribe();
+    this._control = value;
+    if (value) {
+      this.updateMessages(value.errors);
+      this.statusSubscription = value.events.subscribe(() => {
+        this.updateMessages(this._control?.errors);
+      });
+    } else {
+      this.updateMessages(null);
+    }
+  }
+  get control(): AbstractControl<any> | null {
+    return this._control;
+  }
 
   errorMessages: string[] = [];
   statusSubscription?: Subscription;
 
   constructor(private translateService: TranslateService) {
   }
+
   ngOnInit() {
-    if(this.control) {
-
-      this.updateMessages(this.control?.errors);
-      this.statusSubscription = this.control.events.subscribe(status => {
-          this.updateMessages(this.control?.errors)
-      })
-    }
-
-    if(this.validationError) {
-      this.updateMessages(this.validationError)
+    // Subscription is set up by the control setter; handle validationError here.
+    if (this.validationError) {
+      this.updateMessages(this.validationError);
     }
   }
 

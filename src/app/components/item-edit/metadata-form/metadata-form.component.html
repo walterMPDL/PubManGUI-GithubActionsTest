@@ -152,12 +152,13 @@
                             }
                             -->
                             <ng-container formArrayName="creators" validationMessagePosition="top">
+                                @if (!useVirtualScroll) {
                                 <div cdkDropList class="drag-list" (cdkDropListDropped)="dropCreator($event)">
-                                    @for (creature of creators.controls; track creature; let ci = $index) {
+                                    @for (creature of creatorControls; track creature; let ci = $index) {
                                     <ng-container [formGroupName]="ci">
                                         <div cdkDrag>
                                             <pure-creator-form [creator_form]="creature" [index]="ci"
-                                                [index_length]="creators.length" [isSource]="false"
+                                                [index_length]="creators.length" [isSource]="false" [useDragDrop]="true"
                                                 (notice)="handleCreatorNotification($event)"></pure-creator-form>
                                         </div>
                                     </ng-container>
@@ -170,6 +171,27 @@
                                     </div>
                                     }
                                 </div>
+                                } @else {
+                                <cdk-virtual-scroll-viewport #creatorViewport [itemSize]="virtualScrollItemSize" class="drag-list"
+                                    [style.height.px]="virtualScrollViewportHeight">
+                                    <ng-container *cdkVirtualFor="let creature of creatorControls; let ci = index; trackBy: trackByCreatorIndex">
+                                        <ng-container [formGroupName]="ci">
+                                            <pure-creator-form [creator_form]="creature" [index]="ci"
+                                                [index_length]="creators.length" [isSource]="false" [useDragDrop]="false"
+                                                (notice)="handleCreatorNotification($event)"></pure-creator-form>
+                                        </ng-container>
+                                    </ng-container>
+                                </cdk-virtual-scroll-viewport>
+                                }
+
+                                @if (creators.length === 0) {
+                                <div class="col-sm">
+                                    <pure-add-remove-buttons [index]="0" [del_val]="'hidden'"
+                                        [add_val]="'common.add' | translate"
+                                        (notice)="handleCreatorNotification($event)" [addIconAndText]="true"
+                                        data-test="add-remove-creators"></pure-add-remove-buttons>
+                                </div>
+                                }
                             </ng-container>
                         </div>
                     </div>

@@ -1,10 +1,8 @@
 import {
   HttpContext,
-  HttpContextToken,
   HttpErrorResponse,
   HttpEvent,
-  HttpHandler, HttpHandlerFn, HttpHeaders,
-  HttpInterceptor,
+  HttpHandlerFn,
   HttpRequest
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
@@ -16,16 +14,10 @@ import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { LoginComponent } from "../../components/aa/login/login.component";
 import { Router } from "@angular/router";
 import { WindowFocusCheckLoginService } from "../window-focus-check-login.service";
+import { DISPLAY_ERROR, IGNORED_STATUSES, SILENT_LOGOUT, ignoredStatuses } from './http-context-tokens';
 
-
-export const IGNORED_STATUSES = new HttpContextToken<number[]>(() => []);
-export const SILENT_LOGOUT = new HttpContextToken<boolean>(() => false);
-export const DISPLAY_ERROR = new HttpContextToken<boolean>(() => true);
-
-export function ignoredStatuses(statuses: number[]) {
-    return new HttpContext().set(IGNORED_STATUSES, statuses);
-}
-
+// Re-export for compatibility with existing imports.
+export { ignoredStatuses };
 
 export function httpErrorInterceptor(request: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> {
         const ignoredStatuses = request.context.get(IGNORED_STATUSES);

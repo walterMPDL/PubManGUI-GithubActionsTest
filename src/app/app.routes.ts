@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { itemResolver } from "./services/pubman-rest-client/item-resolver";
-import { ItemFormComponent } from "./components/item-edit/item-form/item-form.component";
-import { ItemSearchAdvancedComponent } from "./components/item-search-advanced/item-search-advanced.component";
 import { fetchItemResolver } from './components/imports/services/fetch-item-resolver';
 
 
@@ -79,9 +77,7 @@ export const routes: Routes = [
 
   {
     path: 'advanced-search',
-    component: ItemSearchAdvancedComponent,
-    //loadComponent: () => import('./components/item-search-advanced/item-search-advanced.component').then(m => m.ItemSearchAdvancedComponent),
-    //loadComponent: () => import('./components/test/test.component').then(m => m.TestComponent),
+    loadComponent: () => import('./components/item-search-advanced/item-search-advanced.component').then(m => m.ItemSearchAdvancedComponent),
     data: {
       saveComponent: true,
       breadcrumb: {
@@ -91,8 +87,7 @@ export const routes: Routes = [
   },
   {
     path: 'edit/:id',
-    component: ItemFormComponent,
-    //loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent),
+    loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent),
     resolve: { item: itemResolver },
     data: {
       breadcrumb: {
@@ -116,9 +111,7 @@ export const routes: Routes = [
   },
   {
     path: 'edit',
-    component: ItemFormComponent,
-    //loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent),
-
+    loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent),
     resolve: { templateItem: itemResolver },
     data: {
       breadcrumb: {
@@ -128,8 +121,7 @@ export const routes: Routes = [
   },
   {
     path: 'edit_import',
-    component: ItemFormComponent,
-    //loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent), resolve: { item: fetchItemResolver },
+    loadComponent: () => import('./components/item-edit/item-form/item-form.component').then(m => m.ItemFormComponent),
     resolve: { item: fetchItemResolver },
     data: {
       breadcrumb: {

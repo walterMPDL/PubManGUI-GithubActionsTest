@@ -22,9 +22,9 @@ export class ScrollToTopComponent {
   }
 
   scrollToTop() {
-    let currentScroll = this.document.documentElement.scrollTop || this.document.body.scrollTop;
+    const currentScroll = this.document.documentElement.scrollTop || this.document.body.scrollTop;
     if (currentScroll > 0) {
-      window.scrollTo(0, 0);
-    };
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 }

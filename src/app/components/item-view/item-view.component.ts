@@ -16,8 +16,7 @@ import { AsyncPipe, DatePipe, NgOptimizedImage, ViewportScroller } from "@angula
 import { ItemBadgesComponent } from "../shared/item-badges/item-badges.component";
 import { NgbModal, NgbTooltip } from "@ng-bootstrap/ng-bootstrap";
 import { ItemViewMetadataComponent } from "./item-view-metadata/item-view-metadata.component";
-import { catchError, EMPTY, finalize, forkJoin, map, Observable, tap, throwError, timer } from "rxjs";
-import { environment } from 'src/environments/environment';
+import { catchError, finalize, forkJoin, map, Observable, tap, throwError, timer } from "rxjs";
 import {
   ItemViewMetadataElementComponent
 } from "./item-view-metadata/item-view-metadata-element/item-view-metadata-element.component";
@@ -32,7 +31,7 @@ import { TopnavCartComponent } from "../shared/topnav/topnav-cart/topnav-cart.co
 import { ItemListStateService } from "../item-list/item-list-state.service";
 import { SanitizeHtmlCitationPipe } from "../../pipes/sanitize-html-citation.pipe";
 import { ItemSelectionService } from "../../services/item-selection.service";
-import { DomSanitizer, Meta, Title } from "@angular/platform-browser";
+import { Title } from "@angular/platform-browser";
 import { ItemActionsModalComponent } from "../shared/item-actions-modal/item-actions-modal.component";
 import { LoadingComponent } from "../shared/loading/loading.component";
 import { TranslatePipe } from "@ngx-translate/core";
@@ -57,6 +56,7 @@ import { ConeIconComponent } from "../shared/cone-icon/cone-icon.component";
     ItemViewMetadataComponent,
     ItemViewMetadataElementComponent,
     AsyncPipe,
+    NgOptimizedImage,
     SanitizeHtmlPipe,
     ItemViewFileComponent,
     NotEmptyPipe,

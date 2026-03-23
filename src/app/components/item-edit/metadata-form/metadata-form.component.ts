@@ -1,4 +1,4 @@
-import { Component, effect, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, effect, EventEmitter, inject, Input, OnInit, Output, ViewChild, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ControlType, FormBuilderService } from '../../../services/form-builder.service';
@@ -34,6 +34,7 @@ import { SubjectFormComponent } from '../subject-form/subject-form.component';
 import { AbstractFormComponent } from '../abstract-form/abstract-form.component';
 import { ProjectInfoFormComponent } from '../project-info-form/project-info-form.component';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MiscellaneousService } from 'src/app/services/pubman-rest-client/miscellaneous.service';
 import { LoadingComponent } from 'src/app/components/shared/loading/loading.component';
 import { ContextsService } from 'src/app/services/pubman-rest-client/contexts.service';
@@ -75,6 +76,7 @@ import { hasFormValues } from '../../../utils/utils';
     SourceFormComponent,
     SubjectFormComponent,
     ProjectInfoFormComponent,
+    ScrollingModule,
     CdkDropList,
     CdkDrag,
     TranslatePipe,
@@ -93,11 +95,14 @@ export class MetadataFormComponent implements OnInit {
   @Input() context!: FormGroup<ControlType<ContextDbVO>>;
   @Output() notice = new EventEmitter();
 
+  @ViewChild('creatorViewport') creatorViewport?: any;
+
   aaService = inject(AaService);
   contextService = inject(ContextsService);
   fbs = inject(FormBuilderService);
   messageService = inject(MessageService);
   miscellaneousService = inject(MiscellaneousService);
+  cdr = inject(ChangeDetectorRef);
   genreSpecificResource = this.miscellaneousService.genrePropertiesResource;
   /*computed(() => {
     if (this.miscellaneousService.genrePropertiesResource.hasValue()) {
@@ -113,9 +118,15 @@ export class MetadataFormComponent implements OnInit {
   subject_classification_types = signal<string[]>(Object.keys(SubjectClassification));
   error_types = Errors;
 
+  /** Virtual scroll settings for large creator lists */
+  virtualScrollThreshold = 50; // switch to virtual scroll when list exceeds this length
+  virtualScrollItemSize = 140; // approximate height (px) of a single creator row
+  virtualScrollMaxVisibleItems = 10; // max number of items to render within viewport height
+
   multipleCreators = new FormControl<string>('');
   loading: boolean = false;
   hasFormValues = hasFormValues;
+  creatorControls: Array<FormGroup<ControlType<CreatorVO>>> = [];
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -162,6 +173,7 @@ export class MetadataFormComponent implements OnInit {
   ngOnInit() {
     let genre = this.meta_form.get('genre')?.value ? this.meta_form.get('genre')?.value : undefined;
     this.miscellaneousService.selectedGenre.set(genre);
+    this.refreshCreatorControls();
     this.updateAllowedGenresAndSubjects(); // Initialize allowed_genre_types with correct context specific values
     this.context.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -185,6 +197,19 @@ export class MetadataFormComponent implements OnInit {
 
   get creators() {
     return this.meta_form.get('creators') as FormArray<FormGroup<ControlType<CreatorVO>>>;
+  }
+
+  get useVirtualScroll(): boolean {
+    return this.creators.length > this.virtualScrollThreshold;
+  }
+
+  get virtualScrollViewportHeight(): number {
+    const visibleItems = Math.min(this.creators.length, this.virtualScrollMaxVisibleItems);
+    return visibleItems * this.virtualScrollItemSize;
+  }
+
+  trackByCreatorIndex(index: number, item: any): FormGroup<ControlType<CreatorVO>> {
+    return item;
   }
 
   get event() {
@@ -321,21 +346,55 @@ export class MetadataFormComponent implements OnInit {
     this.alternativeTitles.removeAt(index);
   }
 
+  private getCreatorIndex(event: any): number {
+    if (typeof event.index === 'number') {
+      return event.index;
+    }
+    // Fallback: try to find by FormGroup instance
+    const form = event.creatorForm || event.creator_form || event.form;
+    if (form) {
+      // Compare by form value instead of reference for robustness
+      const foundIndex = this.creators.controls.findIndex(c => c.value === form.value && c === form);
+      if (foundIndex !== -1) {
+        return foundIndex;
+      }
+    }
+    return -1;
+  }
+
   handleCreatorNotification(event: any) {
     if (event.action === 'add') {
-      this.addCreator(event.index);
+      this.addCreator(this.getCreatorIndex(event));
     } else if (event.action === 'remove') {
-      this.removeCreator(event.index);
+      this.removeCreator(this.getCreatorIndex(event));
+    } else if (event.action === 'moveUp') {
+      this.moveCreatorUp(this.getCreatorIndex(event));
+    } else if (event.action === 'moveDown') {
+      this.moveCreatorDown(this.getCreatorIndex(event));
     }
   }
 
   addCreator(index: number) {
     // console.log('current index', index, 'length', this.creators.length)
     this.creators.insert(index + 1, this.fbs.creator_FG(null));
+    this.triggerViewportRefresh();
   }
 
   removeCreator(index: number) {
     this.creators.removeAt(index);
+    this.triggerViewportRefresh();
+  }
+
+  moveCreatorUp(index: number) {
+    if (index > 0) {
+      this.moveItemInArray(this.creators, index, index - 1);
+    }
+  }
+
+  moveCreatorDown(index: number) {
+    if (index < this.creators.length - 1) {
+      this.moveItemInArray(this.creators, index, index + 1);
+    }
   }
 
   handleIdentifierNotification(event: any) {
@@ -464,7 +523,25 @@ export class MetadataFormComponent implements OnInit {
     let object: any = array.at(fromIndex);
     array.removeAt(fromIndex);
     array.insert(toIndex, object);
+
+    this.triggerViewportRefresh();
   }
 
-  protected readonly Object = Object;
+  triggerViewportRefresh() {
+    this.refreshCreatorControls();
+
+    // Trigger change detection so virtual scroll recognizes the reordering
+    this.cdr.detectChanges();
+
+    // Force virtual scroll to re-evaluate the view (necessary for repaint after reordering)
+    try {
+      this.creatorViewport?.checkViewportSize();
+    } catch (e) {
+      console.warn('creatorViewport update failed', e);
+    }
+  }
+
+  private refreshCreatorControls() {
+    this.creatorControls = [...this.creators.controls] as Array<FormGroup<ControlType<CreatorVO>>>;
+  }
 }

@@ -2,7 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpContext } from '@angular/common/http';
 import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { DISPLAY_ERROR } from "src/app/services/interceptors/http-error.interceptor";
+import { DISPLAY_ERROR } from 'src/app/services/interceptors/http-context-tokens';
 
 import type * as params from '../interfaces/imports-params';
 

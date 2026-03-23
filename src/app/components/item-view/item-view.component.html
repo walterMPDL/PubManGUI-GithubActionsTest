@@ -19,7 +19,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['RELEASE'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['RELEASE' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.release' | translate}}" >
       <button class="nav-link" (click)="openActionsModal('release')">
         <span class="material-symbols-outlined">public</span>
@@ -27,7 +27,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['SUBMIT'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['SUBMIT' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.submit' | translate}}" >
       <button class="nav-link" (click)="openActionsModal('submit')">
         <span class="material-symbols-outlined">workspace_premium</span>
@@ -35,7 +35,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['REVISE'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['REVISE' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.revise' | translate}}" >
       <button class="nav-link" (click)="openActionsModal('revise')">
         <svg fill="currentColor" height="24px" width="24px">
@@ -45,7 +45,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['WITHDRAW'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['WITHDRAW' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.withdraw' | translate}}" >
       <button class="nav-link" (click)="openActionsModal('withdraw')">
         <span class="material-symbols-outlined">public_off</span>
@@ -53,7 +53,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['DELETE'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['DELETE' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.delete' | translate}}" >
       <button class="nav-link" (click)="openActionsModal('delete')">
         <span class="material-symbols-outlined">delete_forever</span>
@@ -61,7 +61,7 @@
     </span>
     }
 
-    @if (authorizationInfo && authorizationInfo.actions['ADD_NEW_DOI'] && isLatestVersion) {
+    @if (authorizationInfo && authorizationInfo.actions['ADD_NEW_DOI' ] && isLatestVersion) {
     <span class="d-inline-block" ngbTooltip="{{'ItemActions.addDoi' | translate}}" >
       <button class="nav-link svg-icon" (click)="openActionsModal('addDoi')">
         <svg fill="currentColor" height="24px" width="24px">
@@ -136,10 +136,26 @@
       <div class="col-3 col-sm-2 text-center mb-3">
           @if (thumbnailUrl) {
             <a class="matomo_download" href="{{firstPublicPdfFileUrl}}" target="_blank">
-              <img id="thumbnail" [src]="thumbnailUrl" class="img-thumbnail">
+              <img
+                id="thumbnail"
+                [src]="thumbnailUrl"
+                [alt]="item.metadata.title || 'Thumbnail'"
+                width="214"
+                height="266"
+                class="img-thumbnail"
+                decoding="async"
+              loading="lazy">
             </a>
           } @else {
-            <img id="thumbnail" src="assets/images/DefaultMPGv2.png" class="img-thumbnail">
+            <img
+              id="thumbnail"
+              src="assets/images/DefaultMPGv2_thumb.png"
+              alt="Default thumbnail"
+              width="214"
+              height="266"
+              class="img-thumbnail"
+              decoding="async"
+            loading="lazy">
           }
 
       </div>
@@ -153,7 +169,7 @@
         }
         <!-- author -->
         <div class="d-flex flex-wrap mt-2 align-content-stretch">
-          @for (author of firstAuthors; track author; let i = $index) {
+          @for (author of firstAuthors; track author) {
           <div class="me-5 mb-1">
             @if(author.person) {
               {{ author?.person?.familyName || 'n/a' }}{{author?.person?.givenName ? ', ' + author?.person?.givenName : '' }}
@@ -380,13 +396,14 @@
 
   </div>
 
+  @defer (on viewport) {
   <!-- Files and references -->
   <div class="col-lg-3 m-lg-0 m-3">
 
     <div class="mt-2">
       <h5>{{ 'common.files' | translate }}</h5>
       @if (storedFiles && storedFiles.length && item.publicState !== 'WITHDRAWN') {
-        @for (file of storedFiles; track $index; let i = $index) {
+        @for (file of storedFiles; track $index) {
           <pure-item-view-file [file]="file" [item]="item" />
         }
       }
@@ -400,7 +417,7 @@
     <div >
       <h5>{{ 'common.links' | translate }}</h5>
       @if (externalReferences && externalReferences.length && item.publicState !== 'WITHDRAWN') {
-        @for (file of externalReferences; track $index; let i = $index) {
+        @for (file of externalReferences; track $index) {
           <pure-item-view-file [file]="file" [item]="item" />
         }
       }
@@ -501,6 +518,9 @@
 
       }
   </div>
+  } @placeholder {
+    <div class="col-lg-3 m-lg-0 m-3 text-muted small">{{ 'common.loading' | translate }}...</div>
+  }
 
 
 </div>
