@@ -20,7 +20,7 @@
             <a id="brand_name" [routerLink]="['/']">
               <span class="ms-xl-3 mt-3">{{'header.brand.name'| translate}}</span>
               @if(!environment.production){
-                <span class="text-danger">.{{ environment.label }}</span>
+              <span class="text-danger">.{{ environment.label }}</span>
               }
             </a>
 
@@ -35,11 +35,10 @@
         </div>
 
 
-        <div class="col-4 d-flex align-items-center me-2">
+        <div class="d-none col-xl-4 d-lg-flex align-items-center me-2">
           <!--<pure-switch-bs-theme class="me-4"></pure-switch-bs-theme>-->
           <div class="me-4">
-            <a ngbTooltip="{{ 'common.help' | translate }}" [routerLink]="['/help']"
-              class="nav-link">
+            <a ngbTooltip="{{ 'common.help' | translate }}" [routerLink]="['/help']" class="nav-link">
               <span class="material-symbols-outlined">help</span>
             </a>
           </div>
