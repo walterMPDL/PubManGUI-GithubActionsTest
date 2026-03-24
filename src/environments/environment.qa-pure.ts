@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   label: "qa",
   cone_instance_uri: "https://qa.pure.mpdl.mpg.de/cone",
   inge_rest_uri: "https://qa.pure.mpdl.mpg.de/rest",
