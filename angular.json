@@ -81,11 +81,11 @@
               ],
               "baseHref": "/pubman-gui/"
             },
-            "gui-inge-external": {
+            "qa-pure": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.gui-inge-external.ts"
+                  "with": "src/environments/environment.qa-pure.ts"
                 }
               ],
               "baseHref": "/"
