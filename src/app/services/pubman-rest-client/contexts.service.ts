@@ -32,6 +32,7 @@ export class ContextsService extends PubmanSearchableGenericRestClientService<Co
     //let user: AccountUserDbVO = this.aaService.user;
     let should: any [] = []
     let body = {
+      "size": 1000,
       query: {
         bool: {
           should
@@ -55,6 +56,7 @@ export class ContextsService extends PubmanSearchableGenericRestClientService<Co
     //console.log('Body: ' + JSON.stringify(body));
     //console.log('Token: ' + token);
     if(body.query.bool.should.length) {
+      console.log('Executing search with body: ' + JSON.stringify(body));
       return (this.search(body));
     }
     else return of(undefined);
