@@ -3,25 +3,6 @@
 
   <form [formGroup]="fetchForm" (ngSubmit)="onSubmit()" autocomplete="off">
     <div class="row">
-      <label for="context" class="col-sm-3 col-form-label">{{ 'imports.context' | translate }}</label>
-      <div class="col-sm-9">
-        <select id="context" class="form-select" formControlName="contextId"
-          [class.is-invalid]="fetchForm.get('contextId')?.invalid && fetchForm.get('contextId')?.touched || fetchForm.get('contextId')?.pending" 
-          data-test="fetch-context">
-          <option [ngValue]="null" selected disabled hidden>{{ 'imports.context' | translate }}</option>
-          @for (contextObject of user_contexts; track contextObject) {
-          <option [value]="contextObject.objectId">{{contextObject.name}}</option>
-          }
-        </select>
-      </div>
-    </div>
-    <div class="mb-2 row validation-error" >
-      <div class="offset-sm-3 col-sm-6">
-       <pure-validation-error [control]="fetchForm.get('contextId')"/>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="col-sm-3">
         <label class="col-form-label">{{ 'imports.fetch.source' | translate }}</label>
       </div>

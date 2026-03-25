@@ -1,10 +1,8 @@
-
 import { Component, inject, OnInit, ElementRef, HostListener } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ContextDbRO } from 'src/app/model/inge';
 import { ImportValidatorsService } from 'src/app/components/imports/services/import-validators.service';
 import { ImportsService } from 'src/app/components/imports/services/imports.service';
 import type { GetArxivParams, GetCrossrefParams } from 'src/app/components/imports/interfaces/imports-params';
@@ -36,13 +34,9 @@ export default class FetchComponent implements OnInit {
   msgSvc = inject(MessageService);
   elRef: ElementRef = inject(ElementRef);
 
-  user_contexts?: ContextDbRO[] = [];
-  default_context?: ContextDbRO;
-
   dinamicPlaceholder = "10.1000/1000xyz";
 
-    public fetchForm: FormGroup = this.fb.group({
-    contextId: ['', Validators.required],
+  public fetchForm: FormGroup = this.fb.group({
     source: ['crossref'],
     identifier: ['', [Validators.required, this.valSvc.forbiddenURLValidator(/http/i)]],
     fullText: ['FULLTEXT_DEFAULT']
@@ -50,7 +44,6 @@ export default class FetchComponent implements OnInit {
 
   get getCrossrefParams(): GetCrossrefParams {
     const importParams: GetCrossrefParams = {
-      contextId: this.fetchForm.controls['contextId'].value,
       identifier: this.fetchForm.controls['identifier'].value
     }
     return importParams;
@@ -59,7 +52,6 @@ export default class FetchComponent implements OnInit {
   arxiv = /arxiv:/gi;
   get getArxivParams(): GetArxivParams {
     const importParams: GetArxivParams = {
-      contextId: this.fetchForm.controls['contextId'].value,
       identifier: this.fetchForm.controls['identifier'].value.replace(this.arxiv, '').trim(),
       fullText: this.fetchForm.controls['fullText'].value
     }
@@ -67,15 +59,6 @@ export default class FetchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aaSvc.principal.subscribe(
-      p => {
-        this.user_contexts = p.depositorContexts.sort((a, b) => (a.name || '').localeCompare(b.name || '')).reverse();
-      }
-    );
-    this.fetchForm.controls['contextId'].setValue(this.user_contexts![0].objectId);
-    this.fetchForm.controls['contextId'].markAsTouched();
-
-
     this.fetchForm.controls['source'].valueChanges.subscribe(source => {
       if (source === 'arxiv') {
         this.dinamicPlaceholder = 'arXiv:yymm.nnnnn';
@@ -158,8 +141,6 @@ export default class FetchComponent implements OnInit {
   clickOutside(event: Event) {
     if (this.elRef.nativeElement.parentElement.contains(event.target) && !this.elRef.nativeElement.contains(event.target)) {
       this.fetchForm.reset();
-      this.fetchForm.controls['contextId'].setValue(this.user_contexts![0].objectId);
-      this.fetchForm.controls['contextId'].markAsTouched();
       this.fetchForm.controls['source'].setValue('crossref');
       this.fetchForm.controls['fullText'].setValue('FULLTEXT_DEFAULT'); ""
     }
