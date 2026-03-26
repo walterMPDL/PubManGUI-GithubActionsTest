@@ -5,7 +5,7 @@ import { ItemsService } from "../../../services/pubman-rest-client/items.service
 import { environment } from 'src/environments/environment';
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { ItemSelectionService } from "../../../services/item-selection.service";
-import { catchError, EMPTY, Subscription, tap } from "rxjs";
+import {catchError, EMPTY, Observable, Subscription, tap} from "rxjs";
 import { LoadingComponent } from "../loading/loading.component";
 import { contentDispositionParser } from "../../../utils/utils";
 import { TranslatePipe } from "@ngx-translate/core";
@@ -45,7 +45,7 @@ export class ExportItemsComponent {
 
   @Input() sortQuery: any;
   @Input() completeQuery: any;
-  @Input() type: 'exportSelected' | 'exportAll' = 'exportSelected';
+  @Input() type: 'exportSelected' | 'exportAll' | 'exportSingle' = 'exportSelected';
   //@ViewChildren(CslAutosuggestComponent) cslAutosuggestComponent!: CslAutosuggestComponent;
 
   protected readonly exportTypes = exportTypes;
@@ -91,7 +91,7 @@ export class ExportItemsComponent {
       this.selectedCslName.setValue(expType.cslName);
     }
 
-    if(this.type === 'exportSelected') {
+    if(this.type === 'exportSelected' || this.type === 'exportSingle') {
       this.itemIds = this.selectionService.selectedIds$.value;
     }
     else {
@@ -228,31 +228,47 @@ export class ExportItemsComponent {
     const size = this.type === 'exportSelected' ? this.itemIds.length : this.selectedSize;
     this.track(size);
     this.loading = true;
-    let searchQuery: any = {};
 
-    if(this.type === 'exportSelected') {
-      searchQuery = {
-        query: {
-          bool: {
+    const format = this.selectedExportType.value;
+    const citationType = (!this.isFormat) ? this.selectedCitationType.value : undefined;
+    const cslId = (!this.isFormat && this.selectedCitationType.value === citationTypes.CSL) ? this.selectedCslId.value : undefined
 
-            filter: {
-              terms: {"_id": this.itemIds}
-            },
-            ...this.completeQuery && {must: [this.completeQuery.query]}
-          }
+    let exportObservable: Observable<any>;
 
-        },
-        size: this.itemIds.length,
-        ...this.sortQuery && {sort: this.sortQuery},
-      }
+    if(this.type === 'exportSingle') {
+      exportObservable = this.itemService.retrieveSingleExport(this.itemIds[0], format, citationType, cslId, {globalErrorDisplay: false, responseType:"blob", observe:"response"})
     }
     else {
-      searchQuery = this.completeQuery;
-      searchQuery.size = this.selectedSize;
-      searchQuery.from = this.selectedFrom;
+      let searchQuery: any = {};
+
+      if(this.type === 'exportSelected') {
+        searchQuery = {
+          query: {
+            bool: {
+
+              filter: {
+                terms: {"_id": this.itemIds}
+              },
+              ...this.completeQuery && {must: [this.completeQuery.query]}
+            }
+
+          },
+          size: this.itemIds.length,
+          ...this.sortQuery && {sort: this.sortQuery},
+        }
+      }
+      else { //type === exportAll
+        searchQuery = this.completeQuery;
+        searchQuery.size = this.selectedSize;
+        searchQuery.from = this.selectedFrom;
+      }
+
+      exportObservable = this.itemService.searchAndExport(searchQuery, format, citationType, cslId, {globalErrorDisplay: false})
     }
 
-    this.exportSubscription = this.itemService.searchAndExport(searchQuery, this.selectedExportType.value, (!this.isFormat) ? this.selectedCitationType.value : undefined, (!this.isFormat && this.selectedCitationType.value === citationTypes.CSL) ? this.selectedCslId.value : undefined, {globalErrorDisplay: false})
+
+
+    this.exportSubscription = exportObservable
       .pipe(
         tap(result => {
           if (result.body) {

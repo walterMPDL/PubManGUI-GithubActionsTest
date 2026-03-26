@@ -8,6 +8,9 @@
     @else if(type === 'exportSelected') {
       ({{ 'common.selection' | translate }})
     }
+    @else if(type === 'exportSingle') {
+      ({{ 'common.item' | translate }})
+    }
   </h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
 </div>

@@ -343,8 +343,9 @@ export class ItemViewComponent {
   }
 
   openExportModal() {
-    const comp = this.modalService.open(ExportItemsComponent).componentInstance;
-    comp.item = this.item;
+    const comp: ExportItemsComponent = this.modalService.open(ExportItemsComponent).componentInstance;
+    comp.type = "exportSingle";
+    //comp.item = this.item;
   }
 
 

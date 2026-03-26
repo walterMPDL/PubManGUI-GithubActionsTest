@@ -1,5 +1,5 @@
 <ng-template #personAutosuggestTemplate let-r="result" let-t="term">
-  <div [class]="(r.type==='alt') ? 'ms-3 small' : ''" class="text-wrap">
+  <div [class]="(r.type==='alt') ? 'ms-3 small' : 'border-top'" class="text-wrap">
     <ngb-highlight [result]="r.value" [term]="t"></ngb-highlight>
   </div>
 
