@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslatePipe } from "@ngx-translate/core";
-import { version } from "package.json"
+import { version } from "../../../../package.json"
 
 @Component({
   selector: 'pure-footer',
