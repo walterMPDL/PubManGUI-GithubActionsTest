@@ -60,6 +60,22 @@ jobs:
           # 3. QA Pure
           npm run build -- --c qa-pure
           zip -r release-qa-pure-${{ env.VERSION }}.zip dist/
+          
+      - name: "Create Changelog"
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Configuration can be a JSON string or a file path
+          configuration: |
+            {
+              "categories": [
+                { "title": "## 🚀 Features", "labels": ["feature", "feat"] },
+                { "title": "## 🐛 Fixes", "labels": ["fix"] },
+                { "title": "## 🧪 Tests", "labels": ["test"] }
+              ]
+            }
 
       - name: Commit and Push changes
         run: |
@@ -70,7 +86,7 @@ jobs:
           # Push directly using git to avoid extra action overhead
           git push origin HEAD:main
 
-      - name: Create GitHub Release and Upload Assets
+      - name: Create GitHub Release, Upload Assets and add Changelog
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}
@@ -80,5 +96,7 @@ jobs:
           # Use wildcards to catch all zips created above
           files: |
             release-*-${{ env.VERSION }}.zip
+            with:
+          body: ${{ steps.build_changelog.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
