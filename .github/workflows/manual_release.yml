@@ -17,11 +17,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required to push commits and create releases
-    
+      contents: write
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6 # Recommended version
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.commit_sha || 'main' }}
@@ -44,54 +44,31 @@ jobs:
       - name: Update package.json version
         run: |
           npm version ${{ env.VERSION }} --no-git-tag-version
-          echo "Updated package.json to version ${{ env.VERSION }}"
+          npm install # Ensures package-lock.json is also updated
 
-      - name: Install dependencies
-        run: npm install
+      # Build and Zip using the VERSION variable for consistency
+      - name: Build and Zip Assets
+        run: |
+          # 1. Production Pure
+          npm run build -- --c productive-pure
+          zip -r release-productive-pure-${{ env.VERSION }}.zip dist/
+          
+          # 2. QA Pure Dev
+          npm run build -- --c qa-pure-dev
+          zip -r release-qa-pure-dev-${{ env.VERSION }}.zip dist/
+          
+          # 3. QA Pure
+          npm run build -- --c qa-pure
+          zip -r release-qa-pure-${{ env.VERSION }}.zip dist/
 
-      # 1. Build and Package: Production Pure
-      - name: Build Production Pure
-        run: npm run build -- --c productive-pure
-      
-      - name: Zip Production Asset
-        run: zip -r release-asset-${{ github.ref_name }}-productive-pure.zip dist/
-
-      # 2. Build and Package: QA Pure Dev
-      - name: Build QA Pure Dev
-        run: npm run build -- --c qa-pure-dev
-      
-      - name: Zip QA Pure Dev Asset
-        run: zip -r release-asset-${{ github.ref_name }}-qa-pure-dev.zip dist/
-
-      # 3. Build and Package: QA Pure
-      - name: Build QA Pure
-        run: npm run build -- --c qa-pure
-      
-      - name: Zip QA Pure Asset
-        run: zip -r release-asset-${{ github.ref_name }}-qa-pure.zip dist/
-
-      # 4. Upload all Zips to the Release
-      - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            release-asset-*-productive-pure.zip
-            release-asset-*-qa-pure-dev.zip
-            release-asset-*-qa-pure.zip
-
-      - name: Commit package-lock.json and package.json
+      - name: Commit and Push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions[bot]"
           git add package.json package-lock.json
-          git commit -m "chore: release ${{ env.VERSION }}" || echo "No changes to commit"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          git commit -m "chore: release ${{ env.VERSION }}"
+          # Push directly using git to avoid extra action overhead
+          git push origin HEAD:main
 
       - name: Create GitHub Release and Upload Assets
         uses: softprops/action-gh-release@v2
@@ -100,7 +77,8 @@ jobs:
           name: Release ${{ env.VERSION }}
           draft: false
           prerelease: false
+          # Use wildcards to catch all zips created above
           files: |
-            release-assets-${{ env.VERSION }}.zip
+            release-*-${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
