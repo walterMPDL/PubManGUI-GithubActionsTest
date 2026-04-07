@@ -1,6 +1,6 @@
 {
   "name": "pure",
-  "version": "1.0.400",
+  "version": "1.0.500",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
