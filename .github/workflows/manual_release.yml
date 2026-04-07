@@ -16,6 +16,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push commits and create releases
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -36,31 +39,38 @@ jobs:
             echo "Error: Version must follow semantic versioning format (e.g., 1.2.3)"
             exit 1
           fi
-          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Update package.json version
         run: |
-          npm version ${{ env.version }} --no-git-tag-version
-          echo "Updated package.json to version ${{ env.version }}"
+          npm version ${{ env.VERSION }} --no-git-tag-version
+          echo "Updated package.json to version ${{ env.VERSION }}"
 
       - name: Install dependencies
         run: npm install
 
       - name: Build for production-pure
-        run: npm run build:production-pure
+        run: npm run build -- --c productive-pure
 
       - name: Build for qa-pure-dev
-        run: npm run build:qa-pure-dev
+        run: npm run build -- --c qa-pure-dev
 
       - name: Build for qa-pure
-        run: npm run build:qa-pure
+        run: npm run build -- --c qa-pure
 
-      - name: Commit package-lock.json
+      - name: Package Assets
+        # This assumes your build output goes to a folder named 'dist' or 'build'.
+        # We zip them up to make them easy to download from the release page.
+        run: |
+          zip -r release-assets-${{ env.VERSION }}.zip dist/ 
+          # Note: Change 'dist/' to your actual build output directory if different.
+
+      - name: Commit package-lock.json and package.json
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package-lock.json
-          git commit -m "chore: update package-lock.json for ${{ env.version }}" || echo "No changes to commit"
+          git config --local user.name "github-actions[bot]"
+          git add package.json package-lock.json
+          git commit -m "chore: release ${{ env.VERSION }}" || echo "No changes to commit"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
@@ -68,13 +78,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.version }}
-          release_name: ${{ env.version }}
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
           draft: false
           prerelease: false
+          files: |
+            release-assets-${{ env.VERSION }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
