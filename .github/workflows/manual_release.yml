@@ -64,7 +64,7 @@ jobs:
       - name: Generate Conventional Changelog
         id: build_changelog
         run: |
-          npm install conventional-changelog-cli
+          npm install -g conventional-changelog-cli
           
           # 1. Update the CHANGELOG.md file permanently
           # We use -u to specify that the 'upcoming' version is the one we just set
