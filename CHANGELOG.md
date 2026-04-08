@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/walterMPDL/PubManGUI-GithubActionsTest/compare/1.1.5...1.1.6) (2026-04-08)
+
+
+### Features
+
+* no more installation of changelog ([67d8e2e](https://github.com/walterMPDL/PubManGUI-GithubActionsTest/commit/67d8e2e318cc195c5a09be3466e6e53e4564e772))
+* Running conventional changelog in the vitual machine only ([40cb798](https://github.com/walterMPDL/PubManGUI-GithubActionsTest/commit/40cb79881e17641ee00bdb42305a027f0e403d4f))
 ## [1.1.5](https://github.com/walterMPDL/PubManGUI-GithubActionsTest/compare/1.1.4...1.1.5) (2026-04-08)
 
 
