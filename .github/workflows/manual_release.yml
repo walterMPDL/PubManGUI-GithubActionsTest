@@ -64,15 +64,14 @@ jobs:
       - name: Generate Conventional Changelog
         id: build_changelog
         run: |
-          npm install -g conventional-changelog-cli
+          # Use npx to run the CLI without installing it into the project
+          # -p conventional-changelog-cli ensures npx uses the correct package name
           
           # 1. Update the CHANGELOG.md file permanently
-          # We use -u to specify that the 'upcoming' version is the one we just set
-          npx conventional-changelog -p angular -i CHANGELOG.md -s -u ${{ env.VERSION }}
+          npx -p conventional-changelog-cli conventional-changelog -p angular -i CHANGELOG.md -s -u ${{ env.VERSION }}
           
           # 2. Generate ONLY the delta for the GitHub Release Body
-          # This specifically asks for the changes between the last tag and current HEAD
-          npx conventional-changelog -p angular -r 1 -u ${{ env.VERSION }} > release_notes.md
+          npx -p conventional-changelog-cli conventional-changelog -p angular -r 1 -u ${{ env.VERSION }} > release_notes.md
           
           # Debug: Show what was generated
           echo "--- Generated Release Notes ---"
