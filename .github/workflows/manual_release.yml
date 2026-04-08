@@ -66,40 +66,36 @@ jobs:
         run: |
           npm install conventional-changelog-cli
           
-          # Generate the full changelog. 
-          # -r 0 ensures it regenerates the full history or handles the current unreleased version properly
-          npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+          # 1. Update the CHANGELOG.md file permanently
+          # We use -u to specify that the 'upcoming' version is the one we just set
+          npx conventional-changelog -p angular -i CHANGELOG.md -s -u ${{ env.VERSION }}
           
-          # Extract only the top section (the newest version) for the GitHub Release body
-          # Looks for the first occurrence of a version header and captures until the next one
-          sed -n '/^#/,/^#/{/^#/!p;}' CHANGELOG.md > release_notes.md
+          # 2. Generate ONLY the delta for the GitHub Release Body
+          # This specifically asks for the changes between the last tag and current HEAD
+          npx conventional-changelog -p angular -r 1 -u ${{ env.VERSION }} > release_notes.md
           
-          # If the file is empty (common if no conventional commits found), add a fallback
-          if [ ! -s release_notes.md ]; then
-            echo "Manual release for version ${{ env.VERSION }}" > release_notes.md
-          fi
+          # Debug: Show what was generated
+          echo "--- Generated Release Notes ---"
+          cat release_notes.md
+          echo "-------------------------------"
 
       - name: Commit and Push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions[bot]"
-          git add package.json package-lock.json
+          # Add CHANGELOG.md to the commit!
+          git add package.json package-lock.json CHANGELOG.md
           git commit -m "chore: release ${{ env.VERSION }}"
-          # Push directly using git to avoid extra action overhead
           git push origin HEAD:main
 
-      - name: Create GitHub Release, Upload Assets and add Changelog
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}
           name: Release ${{ env.VERSION }}
-          body_path: ${{ steps.build_changelog.outputs.changelog_path }}
-          draft: false
-          prerelease: false
-          # Use wildcards to catch all zips created above
+          # Point to the file created in the changelog step
+          body_path: release_notes.md
           files: |
             release-*-${{ env.VERSION }}.zip
-            with:
-          
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
