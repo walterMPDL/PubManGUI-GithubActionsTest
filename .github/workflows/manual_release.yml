@@ -64,19 +64,20 @@ jobs:
       - name: Generate Conventional Changelog
         id: build_changelog
         run: |
-          # Install the conventional-changelog CLI locally
           npm install conventional-changelog-cli
           
-          # Generate the changelog for the current version
-          # -p angular: Uses the Angular preset (feat, fix, etc.)
-          # -u: Specifies the version to use in the header
-          npx conventional-changelog -p angular -i CHANGELOG.md -s -u ${{ env.VERSION }}
+          # Generate the full changelog. 
+          # -r 0 ensures it regenerates the full history or handles the current unreleased version properly
+          npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
           
-          # Extract only the latest version's notes to a temporary file for the release body
-          # This reads from the start of the file until the second version header
-          sed -n '1,/^## /p' CHANGELOG.md | sed '$d' > release_notes.md
+          # Extract only the top section (the newest version) for the GitHub Release body
+          # Looks for the first occurrence of a version header and captures until the next one
+          sed -n '/^#/,/^#/{/^#/!p;}' CHANGELOG.md > release_notes.md
           
-          echo "changelog_path=release_notes.md" >> $GITHUB_OUTPUT
+          # If the file is empty (common if no conventional commits found), add a fallback
+          if [ ! -s release_notes.md ]; then
+            echo "Manual release for version ${{ env.VERSION }}" > release_notes.md
+          fi
 
       - name: Commit and Push changes
         run: |
