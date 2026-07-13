@@ -18,81 +18,86 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: read
+      pull-requests: read
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6 # Recommended version
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.inputs.commit_sha || 'main' }}
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
 
       - name: Validate version format
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            echo "Error: Version must follow semantic versioning format (e.g., 1.2.3)"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Error: Version must follow semantic versioning format (e.g., 1.2.3)"
             exit 1
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Update package.json version
         run: |
-          npm version ${{ env.VERSION }} --no-git-tag-version
-          npm install # Ensures package-lock.json is also updated
-
-      # Build and Zip using the VERSION variable for consistency
-      - name: Build and Zip Assets
+          npm version "${{ env.VERSION }}" --no-git-tag-version
+          npm install --prefer-offline --no-audit
+      - name: Build and package assets
         run: |
-          # 1. Production Pure
+          # Build productive-pure
           npm run build -- --c productive-pure
-          zip -r release-productive-pure-${{ env.VERSION }}.zip dist/
-
-          # 2. QA Pure Dev
+          zip -r "release-productive-pure-${{ env.VERSION }}.zip" dist/
+          # Build qa-pure-dev
           npm run build -- --c qa-pure-dev
-          zip -r release-qa-pure-dev-${{ env.VERSION }}.zip dist/
-
-          # 3. QA Pure
+          zip -r "release-qa-pure-dev-${{ env.VERSION }}.zip" dist/
+          # Build qa-pure
           npm run build -- --c qa-pure
-          zip -r release-qa-pure-${{ env.VERSION }}.zip dist/
-
+          zip -r "release-qa-pure-${{ env.VERSION }}.zip" dist/
       - name: Generate Conventional Changelog
-        id: build_changelog
         run: |
-          # Use npx to run the CLI without installing it into the project
-          # -p conventional-changelog ensures npx uses the package directly
-
-          # 1. Update the CHANGELOG.md file permanently
-          npx -p conventional-changelog -p conventional-changelog-angular conventional-changelog -p angular -i CHANGELOG.md -s -u ${{ env.VERSION }}
-
-          # 2. Generate ONLY the delta for the GitHub Release Body
-          npx -p conventional-changelog -p conventional-changelog-angular conventional-changelog -p angular -r 1 -u ${{ env.VERSION }} > release_notes.md
-
-          # Debug: Show what was generated
+          set -euo pipefail
+          # Falls es noch keine CHANGELOG.md gibt (erster Release)
+          touch CHANGELOG.md
+          # Nur den NEUEN Eintrag (seit letztem Tag) separat nach stdout
+          # erzeugen, OHNE CHANGELOG.md direkt zu verändern (-i/-s entfällt).
+          #
+          # Grund: Bei Patch-Releases liegt die Versions-Überschrift auf
+          # Heading-Level "###" - demselben Level wie Kategorie-Überschriften
+          # wie "### Features" oder "### Bug Fixes". Ein Parsing per Regex/awk
+          # anhand der Heading-Ebene kann daher nicht zuverlässig zwischen
+          # "neuer Versions-Eintrag" und "nächste Kategorie" unterscheiden.
+          # Durch die separate Erzeugung entfällt dieses Problem komplett.
+          npx --yes conventional-changelog-cli \
+            -p angular \
+            -r 1 \
+            -t "" \
+            > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "::warning::Keine Commits seit letztem Release gefunden - Release Notes sind leer."
+          fi
+          # Neuen Eintrag oben in CHANGELOG.md voranstellen
+          cat release_notes.md CHANGELOG.md > CHANGELOG.md.tmp
+          mv CHANGELOG.md.tmp CHANGELOG.md
           echo "--- Generated Release Notes ---"
           cat release_notes.md
           echo "-------------------------------"
-
-      - name: Commit and Push changes
+      - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions[bot]"
-          # Add CHANGELOG.md to the commit!
           git add package.json package-lock.json CHANGELOG.md
-          git commit -m "chore: release ${{ env.VERSION }}"
+          git commit -m "chore(release): release ${{ env.VERSION }}"
           git push origin HEAD:main
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}
           name: Release ${{ env.VERSION }}
-          # Point to the file created in the changelog step
           body_path: release_notes.md
           files: |
             release-*-${{ env.VERSION }}.zip
